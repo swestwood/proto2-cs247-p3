@@ -36,6 +36,7 @@ class window.FirebaseInteractor
     @fb_instance_users = @fb_new_chat_room.child('users')
     @fb_instance_stream = @fb_new_chat_room.child('stream')
     @fb_user_video_list = @fb_new_chat_room.child('user_video_list')
+    @fb_memory = @fb_new_chat_room.child('memory')
 
 
 class window.EmotionVideoStore
@@ -80,7 +81,6 @@ class window.EmotionVideoStore
       return undefined
     return _.sample(allVideos)
 
-
   removeVideoItem: (video, fb_video_list) =>
     if video.quickId not of @fbResults
       return
@@ -94,7 +94,7 @@ class window.EmotionVideoStore
 
 class window.MemoryBuilder
 
-  constructor: (@elem, @emotionVideoStore) ->
+  constructor: (@elem, @emotionVideoStore, @fbInteractor) ->
     $("#make_memory_button").on("click", @randomlyMakeMemory)
 
   randomlyMakeMemory: =>
@@ -109,7 +109,12 @@ class window.MemoryBuilder
     Templates["memoryBuilder"](context)
     console.log $("#memory_builder_container")
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
+    @fbInteractor.fb_memory.set(context)
     console.log context
+
+  respondToSetMemory: (context) =>
+    $("#memory_builder_container").html(Templates["memoryBuilder"](context))
+
 
 
 class window.ChatRoom
@@ -117,7 +122,7 @@ class window.ChatRoom
   constructor: (@fbInteractor, @videoRecorder) ->
     @emotionVideoStore = new EmotionVideoStore()
     @messageBefore = ""
-    @memoryBuilder = new MemoryBuilder($("#memory_builder_container"), @emotionVideoStore)
+    @memoryBuilder = new MemoryBuilder($("#memory_builder_container"), @emotionVideoStore, @fbInteractor)
 
     # Listen to Firebase events
     @fbInteractor.fb_instance_users.on "child_added", (snapshot) =>
@@ -133,6 +138,9 @@ class window.ChatRoom
 
     @fbInteractor.fb_user_video_list.on "child_removed", (snapshot) =>
       @emotionVideoStore.removeVideoSnapshot(snapshot.val())
+
+    @fbInteractor.fb_memory.on "value", (snapshot) =>
+      @memoryBuilder.respondToSetMemory(snapshot.val())
 
     @submissionEl = $("#submission input")
 

@@ -33,7 +33,8 @@
       this.fb_new_chat_room = this.fb_instance.child('chatrooms').child(this.fb_chat_room_id);
       this.fb_instance_users = this.fb_new_chat_room.child('users');
       this.fb_instance_stream = this.fb_new_chat_room.child('stream');
-      return this.fb_user_video_list = this.fb_new_chat_room.child('user_video_list');
+      this.fb_user_video_list = this.fb_new_chat_room.child('user_video_list');
+      return this.fb_memory = this.fb_new_chat_room.child('memory');
     };
 
     return FirebaseInteractor;
@@ -118,9 +119,11 @@
   })();
 
   window.MemoryBuilder = (function() {
-    function MemoryBuilder(elem, emotionVideoStore) {
+    function MemoryBuilder(elem, emotionVideoStore, fbInteractor) {
       this.elem = elem;
       this.emotionVideoStore = emotionVideoStore;
+      this.fbInteractor = fbInteractor;
+      this.respondToSetMemory = __bind(this.respondToSetMemory, this);
       this.randomlyMakeMemory = __bind(this.randomlyMakeMemory, this);
       $("#make_memory_button").on("click", this.randomlyMakeMemory);
     }
@@ -145,7 +148,12 @@
       Templates["memoryBuilder"](context);
       console.log($("#memory_builder_container"));
       $("#memory_builder_container").html(Templates["memoryBuilder"](context));
+      this.fbInteractor.fb_memory.set(context);
       return console.log(context);
+    };
+
+    MemoryBuilder.prototype.respondToSetMemory = function(context) {
+      return $("#memory_builder_container").html(Templates["memoryBuilder"](context));
     };
 
     return MemoryBuilder;
@@ -165,7 +173,7 @@
       this.init = __bind(this.init, this);
       this.emotionVideoStore = new EmotionVideoStore();
       this.messageBefore = "";
-      this.memoryBuilder = new MemoryBuilder($("#memory_builder_container"), this.emotionVideoStore);
+      this.memoryBuilder = new MemoryBuilder($("#memory_builder_container"), this.emotionVideoStore, this.fbInteractor);
       this.fbInteractor.fb_instance_users.on("child_added", function(snapshot) {
         _this.displayMessage({
           m: snapshot.val().name + " joined the room",
@@ -181,6 +189,9 @@
       });
       this.fbInteractor.fb_user_video_list.on("child_removed", function(snapshot) {
         return _this.emotionVideoStore.removeVideoSnapshot(snapshot.val());
+      });
+      this.fbInteractor.fb_memory.on("value", function(snapshot) {
+        return _this.memoryBuilder.respondToSetMemory(snapshot.val());
       });
       this.submissionEl = $("#submission input");
     }
