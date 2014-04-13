@@ -3,59 +3,22 @@ This is a hack to avoid having to manually pre-compile the Handlebars templates.
 """
 
 window.buildTemplates = =>
-  
-  # Treat these as HTML files
-  quizHandlebars = """
-  <div class="indiv_quiz_container {{forWhomClass}}">
-    <div class="quiz_title">Face off!</div>
-    <p>{{challengeMessage}}</p>
-    <video autoplay="" loop="" width="320"><source src="{{videoUrl}}" type="video/webm"></video>
-    {{#each quizChoices}}
-      <button class='quiz-choice {{correct}}'>{{emoticon}}</button>
-    {{/each}}
-  </div>
-  """
 
-  powerupHandlebars = """
-  <div class="quiz_title">Use emoticons while chatting to power up for a face off!</div>
-  <p>Two users need to have at least {{numRequiredVideos}} emoticon videos available to start!</p>
-  <p>Once every user is ready, a quiz will be triggered.</p>
-  <div class="powerup_available_videos">
-
-  </div>
-
-  <div class="progress-wrap progress" data-progress-percent="0">
-    <div class="progress-bar progress"></div>
-  </div>
-  <p id="powerup_encouragement"></p>
-  """
-
-
-  powerupAvailableHandlebars = """
-  {{#each usersAvailable}}
-    <div class="powerup-user-available">
-      <span class="powerup-username">{{username}}:</span>
-      <span class="powerup-num-available">{{numAvailable}}</span>
-      <span class="is-ready">
-      {{#if enoughVideos}}
-        <span class="powerup-user-ready">
-          (Ready!)
-        </span>
-      {{else}}
-        <span class="powerup-user-not-ready">
-          (Keep using emoticons!)
-        </span
-      {{/if}}
-      </span>
+  memoryBuilderHandlebars = """
+  <div id="memory_builder">
+  <h3>Panels:</h3>
+  {{#each panels}}<div class="panel_wrapper" {{panelIndex}}">
+    <div class="panel">  {{!-- {{Comment: the width here needs to match the width in the CSS for .panel_wrapper! }} --}}
+      <video autoplay="" loop="" width="200"><source src="{{video.videoUrl}}" type="video/webm"></video>
+      <span class="memory_message">{{video.messageBefore}}</span>
+      <span class="memory_message">{{video.messageCurrent}}</span>
     </div>
-  {{/each}}
+  </div>{{/each}}
   """
 
   # Add any new templates to this dictionary so that they get compiled.
   handlebarsElems = 
-    "quiz": quizHandlebars
-    "powerup": powerupHandlebars
-    "powerup_available": powerupAvailableHandlebars
+    "memoryBuilder": memoryBuilderHandlebars
   return handlebarsElems
 
 # Access templates via window.Templates["quiz"] for example, depending on the name given in

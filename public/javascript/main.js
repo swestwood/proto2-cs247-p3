@@ -21,10 +21,6 @@
 
   window.VIDEO_LENGTH_MS = 1000;
 
-  window.NUMBER_WRONG_CHOICES = 3;
-
-  window.MIN_REQUIRED_VIDEOS_FOR_QUIZ = 2;
-
   window.FirebaseInteractor = (function() {
     "Connects to Firebase and connects to chatroom variables.";
     function FirebaseInteractor() {
@@ -37,254 +33,10 @@
       this.fb_new_chat_room = this.fb_instance.child('chatrooms').child(this.fb_chat_room_id);
       this.fb_instance_users = this.fb_new_chat_room.child('users');
       this.fb_instance_stream = this.fb_new_chat_room.child('stream');
-      this.fb_user_video_list = this.fb_new_chat_room.child('user_video_list');
-      this.fb_user_quiz_one = this.fb_new_chat_room.child('user_quiz_one');
-      return this.fb_user_quiz_two = this.fb_new_chat_room.child('user_quiz_two');
+      return this.fb_user_video_list = this.fb_new_chat_room.child('user_video_list');
     };
 
     return FirebaseInteractor;
-
-  })();
-
-  window.Powerup = (function() {
-    "Builds and renders a single powerup screen.";
-    function Powerup(elem) {
-      this.elem = elem;
-      this.render = __bind(this.render, this);
-    }
-
-    Powerup.prototype.render = function() {
-      var context, html;
-      context = {
-        numRequiredVideos: MIN_REQUIRED_VIDEOS_FOR_QUIZ
-      };
-      html = window.Templates["powerup"](context);
-      return this.elem.html(html);
-    };
-
-    return Powerup;
-
-  })();
-
-  window.Quiz = (function() {
-    "Builds and renders a single quiz.";
-    function Quiz(emoticonAnswer, choices, videoData, fromUser, toUser, elem, status, currUser) {
-      this.emoticonAnswer = emoticonAnswer;
-      this.choices = choices;
-      this.videoData = videoData;
-      this.fromUser = fromUser;
-      this.toUser = toUser;
-      this.elem = elem;
-      this.status = status;
-      this.currUser = currUser;
-      this.render = __bind(this.render, this);
-      this.videoBlob = URL.createObjectURL(BlobConverter.base64_to_blob(videoData));
-    }
-
-    Quiz.prototype.render = function() {
-      var context, html, message, videoOfCurrUser;
-      videoOfCurrUser = this.fromUser === this.currUser;
-      message = "How well do you know " + this.fromUser + "?";
-      if (videoOfCurrUser) {
-        message = "How well do they know you?";
-      }
-      context = {
-        videoUrl: this.videoBlob,
-        fromUser: this.fromUser,
-        emoticon: this.emoticonAnswer,
-        quizChoices: this.choices,
-        challengeMessage: message,
-        forWhomClass: videoOfCurrUser ? "otherPersonGuessing" : "selfIsGuessing"
-      };
-      html = window.Templates["quiz"](context);
-      return this.elem.html(html);
-    };
-
-    return Quiz;
-
-  })();
-
-  window.QuizCoordinator = (function() {
-    "Manipulates Quiz objects for the game.";
-    function QuizCoordinator(elem, emotionVideoStore, fbInteractor, currentPowerup, updatePowerupScreenFcn) {
-      this.elem = elem;
-      this.emotionVideoStore = emotionVideoStore;
-      this.fbInteractor = fbInteractor;
-      this.currentPowerup = currentPowerup;
-      this.updatePowerupScreenFcn = updatePowerupScreenFcn;
-      this.createQuiz = __bind(this.createQuiz, this);
-      this.responsibleForMakingQuiz = __bind(this.responsibleForMakingQuiz, this);
-      this.readyForQuiz = __bind(this.readyForQuiz, this);
-      this.getLongVideoArrays = __bind(this.getLongVideoArrays, this);
-      this.handleIncomingQuiz = __bind(this.handleIncomingQuiz, this);
-      this.switchScreen = __bind(this.switchScreen, this);
-      this.setUserName = __bind(this.setUserName, this);
-      this.handleGuessMade = __bind(this.handleGuessMade, this);
-      this.respondToAnswerChoice = __bind(this.respondToAnswerChoice, this);
-      this.getQuizInteractor = __bind(this.getQuizInteractor, this);
-      this.quizProbability = 1;
-      this.username = null;
-    }
-
-    QuizCoordinator.prototype.getQuizInteractor = function(quizName) {
-      var user_quiz_fb;
-      user_quiz_fb = quizName === "quiz_one" ? this.fbInteractor.fb_user_quiz_one : this.fbInteractor.fb_user_quiz_two;
-      console.log("user item");
-      console.log(user_quiz_fb);
-      return user_quiz_fb;
-    };
-
-    QuizCoordinator.prototype.respondToAnswerChoice = function(evt, quizChoiceSelector, quizName) {
-      var chosenFace, isCorrect;
-      $(quizChoiceSelector).off("click");
-      isCorrect = $(evt.target).hasClass("correct");
-      chosenFace = $(evt.target).html();
-      return this.getQuizInteractor(quizName).update({
-        "status": "new guess",
-        "guess": $(evt.target).html(),
-        "guessCorrect": isCorrect,
-        "chosenFace": chosenFace
-      });
-    };
-
-    QuizCoordinator.prototype.handleGuessMade = function(snapshot, quizName) {
-      var choiceElem, quizEl, seconds, _i, _len, _ref,
-        _this = this;
-      quizEl = $(this.elem.find("." + quizName));
-      if (snapshot.guessCorrect) {
-        quizEl.addClass("guessedCorrectly");
-        quizEl.css({
-          "background-color": "green"
-        });
-      } else {
-        quizEl.addClass("guessedWrong");
-        quizEl.css({
-          "background-color": "#FFCCCC"
-        });
-        _ref = quizEl.find(".quiz-choice");
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          choiceElem = _ref[_i];
-          choiceElem = $(choiceElem);
-          if (choiceElem.html() === snapshot.chosenFace) {
-            choiceElem.addClass("wrongChoiceThatWasGuessed");
-          }
-        }
-      }
-      quizEl.addClass("inactive").removeClass("active");
-      this.getQuizInteractor(quizName).update({
-        "status": "quiz over"
-      });
-      if ($(".quiz.inactive").size() === 2) {
-        console.log("switching screens back to powerup");
-        seconds = 7;
-        $("#quiz-done-area").show().html("Finished the quiz! Moving on in " + seconds + " seconds...");
-        return setTimeout(function() {
-          $("#quiz-done-area").html("").hide();
-          return _this.switchScreen(false);
-        }, seconds * 1000);
-      }
-    };
-
-    QuizCoordinator.prototype.setUserName = function(user) {
-      return this.username = user;
-    };
-
-    QuizCoordinator.prototype.switchScreen = function(showQuiz) {
-      if (showQuiz) {
-        $('#quiz_container').show();
-        return $('#powerup_container').hide();
-      } else {
-        $('#quiz_container').hide();
-        this.currentPowerup = new Powerup($('#powerup_container'));
-        this.currentPowerup.render();
-        $('#powerup_container').show();
-        return this.updatePowerupScreenFcn();
-      }
-    };
-
-    QuizCoordinator.prototype.handleIncomingQuiz = function(snapshot, quizName) {
-      var quiz, quizChoiceSelector, quizEl,
-        _this = this;
-      this.emotionVideoStore.removeVideoItem(snapshot, this.fbInteractor.fb_user_video_list);
-      console.log("handling incoming quiz");
-      quizEl = $(this.elem.find("." + quizName));
-      quizEl.css({
-        "background-color": "lightgray"
-      });
-      quiz = new Quiz(snapshot.emoticon, snapshot.choices, snapshot.v, snapshot.fromUser, this.username, quizEl, snapshot.status, this.username);
-      quiz.render();
-      quizEl.addClass("active").removeClass("inactive");
-      this.switchScreen(true);
-      if (snapshot.fromUser === this.username) {
-        quizEl.removeClass("enabled");
-        return quizEl.css({
-          "background-color": "lightgray"
-        });
-      } else {
-        quizEl.addClass("enabled");
-        quizEl.css({
-          "background-color": "lightblue"
-        });
-        quizChoiceSelector = "." + quizName + " .quiz-choice";
-        console.log("selector here: " + quizChoiceSelector);
-        return $(quizChoiceSelector).on("click", function(evt) {
-          console.log('removing');
-          console.log(quizChoiceSelector);
-          return _this.respondToAnswerChoice(evt, quizChoiceSelector, quizName);
-        });
-      }
-    };
-
-    QuizCoordinator.prototype.getLongVideoArrays = function() {
-      var key, longVideoArrs, val, _ref;
-      longVideoArrs = {};
-      _ref = this.emotionVideoStore.videos;
-      for (key in _ref) {
-        val = _ref[key];
-        if (_.size(val) >= MIN_REQUIRED_VIDEOS_FOR_QUIZ) {
-          longVideoArrs[key] = val;
-        }
-      }
-      return longVideoArrs;
-    };
-
-    QuizCoordinator.prototype.readyForQuiz = function() {
-      var enoughUserVideos;
-      enoughUserVideos = this.getLongVideoArrays();
-      return _.size(enoughUserVideos) >= 2;
-    };
-
-    QuizCoordinator.prototype.responsibleForMakingQuiz = function(usernames) {
-      "Responsibility for making the quiz is determined by lexicographic ordering";
-      var _this = this;
-      return _.every(usernames, function(otherUser) {
-        return _this.username >= otherUser;
-      });
-    };
-
-    QuizCoordinator.prototype.createQuiz = function() {
-      var enoughUserVideos, randomVideoOne, randomVideoTwo, usernames;
-      enoughUserVideos = this.getLongVideoArrays();
-      usernames = _.keys(enoughUserVideos);
-      if (_.size(usernames) < 2) {
-        console.error("Trying to create a quiz, but without enough user videos!");
-        return;
-      }
-      if (_.size(usernames) > 2) {
-        console.error("There are more than 2 users, this may be bad!");
-      }
-      if (!this.responsibleForMakingQuiz(usernames)) {
-        console.log('not responsible');
-        return;
-      }
-      console.log('responsible, making quiz');
-      randomVideoOne = _.sample(enoughUserVideos[usernames[0]]);
-      this.fbInteractor.fb_user_quiz_one.set(randomVideoOne);
-      randomVideoTwo = _.sample(enoughUserVideos[usernames[1]]);
-      return this.fbInteractor.fb_user_quiz_two.set(randomVideoTwo);
-    };
-
-    return QuizCoordinator;
 
   })();
 
@@ -292,6 +44,7 @@
     "Stores a map from each user to a list of that user's emotion videos";
     function EmotionVideoStore() {
       this.removeVideoItem = __bind(this.removeVideoItem, this);
+      this.getRandomVideo = __bind(this.getRandomVideo, this);
       this.removeVideoSnapshot = __bind(this.removeVideoSnapshot, this);
       this.storePushedFb = __bind(this.storePushedFb, this);
       this.addUser = __bind(this.addUser, this);
@@ -304,6 +57,7 @@
       if (!(data.fromUser in this.videos)) {
         this.videos[data.fromUser] = [];
       }
+      data.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(data.v));
       this.videos[data.fromUser].push(data);
       console.log("videos: ");
       return console.log(this.videos);
@@ -335,6 +89,16 @@
       return console.log(data);
     };
 
+    EmotionVideoStore.prototype.getRandomVideo = function() {
+      var allVideos;
+      allVideos = _.flatten(_.values(this.videos));
+      if (_.isEmpty(allVideos)) {
+        console.error("Cannot get random video URL, no videos exist");
+        return void 0;
+      }
+      return _.sample(allVideos);
+    };
+
     EmotionVideoStore.prototype.removeVideoItem = function(video, fb_video_list) {
       var pushedFb;
       if (!(video.quickId in this.fbResults)) {
@@ -353,6 +117,41 @@
 
   })();
 
+  window.MemoryBuilder = (function() {
+    function MemoryBuilder(elem, emotionVideoStore) {
+      this.elem = elem;
+      this.emotionVideoStore = emotionVideoStore;
+      this.randomlyMakeMemory = __bind(this.randomlyMakeMemory, this);
+      $("#make_memory_button").on("click", this.randomlyMakeMemory);
+    }
+
+    MemoryBuilder.prototype.randomlyMakeMemory = function() {
+      var chosenVideo, context, panelIndex, _i, _len, _ref;
+      console.log("randomly making memory");
+      context = {
+        panels: []
+      };
+      _ref = ["first", "second", "third", "fourth"];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        panelIndex = _ref[_i];
+        chosenVideo = this.emotionVideoStore.getRandomVideo();
+        console.log("got a random memory");
+        context.panels.push({
+          "video": chosenVideo,
+          "panelIndex": panelIndex
+        });
+      }
+      console.log("html: ");
+      Templates["memoryBuilder"](context);
+      console.log($("#memory_builder_container"));
+      $("#memory_builder_container").html(Templates["memoryBuilder"](context));
+      return console.log(context);
+    };
+
+    return MemoryBuilder;
+
+  })();
+
   window.ChatRoom = (function() {
     "Main class to control the chat room UI of messages and video";
     function ChatRoom(fbInteractor, videoRecorder) {
@@ -364,110 +163,27 @@
       this.scrollToBottom = __bind(this.scrollToBottom, this);
       this.setupSubmissionBox = __bind(this.setupSubmissionBox, this);
       this.init = __bind(this.init, this);
-      this.respondToFbQuiz = __bind(this.respondToFbQuiz, this);
-      this.updateProgressBar = __bind(this.updateProgressBar, this);
-      this.updatePowerupScreen = __bind(this.updatePowerupScreen, this);
       this.emotionVideoStore = new EmotionVideoStore();
-      this.currentPowerup = new Powerup($('#powerup_container'));
-      this.currentPowerup.render();
-      this.quizCoordinator = new QuizCoordinator($("#quiz_container"), this.emotionVideoStore, this.fbInteractor, this.currentPowerup, this.updatePowerupScreen);
-      this.updatePowerupScreen();
+      this.messageBefore = "";
+      this.memoryBuilder = new MemoryBuilder($("#memory_builder_container"), this.emotionVideoStore);
       this.fbInteractor.fb_instance_users.on("child_added", function(snapshot) {
         _this.displayMessage({
           m: snapshot.val().name + " joined the room",
           c: snapshot.val().c
         });
-        _this.emotionVideoStore.addUser(snapshot.val().name);
-        return _this.updatePowerupScreen();
+        return _this.emotionVideoStore.addUser(snapshot.val().name);
       });
       this.fbInteractor.fb_instance_stream.on("child_added", function(snapshot) {
         return _this.displayMessage(snapshot.val());
       });
       this.fbInteractor.fb_user_video_list.on("child_added", function(snapshot) {
-        _this.emotionVideoStore.addVideoSnapshot(snapshot.val());
-        _this.updatePowerupScreen();
-        if (_this.quizCoordinator.readyForQuiz()) {
-          console.log("Ready for quiz!");
-          return _this.quizCoordinator.createQuiz();
-        }
+        return _this.emotionVideoStore.addVideoSnapshot(snapshot.val());
       });
       this.fbInteractor.fb_user_video_list.on("child_removed", function(snapshot) {
         return _this.emotionVideoStore.removeVideoSnapshot(snapshot.val());
       });
-      this.fbInteractor.fb_user_quiz_one.on("value", function(snapshot) {
-        return _this.respondToFbQuiz(snapshot, "quiz_one");
-      });
-      this.fbInteractor.fb_user_quiz_two.on("value", function(snapshot) {
-        return _this.respondToFbQuiz(snapshot, "quiz_two");
-      });
       this.submissionEl = $("#submission input");
     }
-
-    ChatRoom.prototype.updatePowerupScreen = function() {
-      var context, html, key, userContext, val, _ref;
-      context = {
-        usersAvailable: []
-      };
-      _ref = this.emotionVideoStore.videos;
-      for (key in _ref) {
-        val = _ref[key];
-        userContext = {
-          "username": key,
-          "numAvailable": _.size(val)
-        };
-        if (_.size(val) >= MIN_REQUIRED_VIDEOS_FOR_QUIZ) {
-          userContext["enoughVideos"] = true;
-        }
-        context.usersAvailable.push(userContext);
-      }
-      html = window.Templates["powerup_available"](context);
-      $(".powerup_available_videos").html(html);
-      return this.updateProgressBar();
-    };
-
-    ChatRoom.prototype.updateProgressBar = function() {
-      var animationLength, getProgressWrapWidth, key, newPercent, numberPerUserArr, percentHundred, progressTotal, sumOfBiggestTwo, val, _ref;
-      numberPerUserArr = [];
-      _ref = this.emotionVideoStore.videos;
-      for (key in _ref) {
-        val = _ref[key];
-        numberPerUserArr.push(_.size(val));
-      }
-      numberPerUserArr.sort();
-      numberPerUserArr.reverse();
-      sumOfBiggestTwo = 0;
-      if (_.size(numberPerUserArr) >= 1) {
-        sumOfBiggestTwo += Math.min(numberPerUserArr[0], 2);
-      }
-      if (_.size(numberPerUserArr) >= 2) {
-        sumOfBiggestTwo += Math.min(numberPerUserArr[1], 2);
-      }
-      newPercent = (sumOfBiggestTwo / (MIN_REQUIRED_VIDEOS_FOR_QUIZ * 2)) * 100;
-      if (newPercent > 100) {
-        newPercent = 100;
-      }
-      percentHundred = newPercent / 100;
-      getProgressWrapWidth = $(".progress-wrap").width();
-      progressTotal = percentHundred * getProgressWrapWidth;
-      animationLength = 1000;
-      return $(".progress-bar").animate({
-        left: progressTotal
-      }, animationLength);
-    };
-
-    ChatRoom.prototype.respondToFbQuiz = function(snapshot, quizName) {
-      var snapshotVal;
-      if (!snapshot || !snapshot.val()) {
-        return;
-      }
-      snapshotVal = snapshot.val();
-      if (snapshotVal.status === 'new quiz') {
-        this.quizCoordinator.handleIncomingQuiz(snapshotVal, quizName);
-      }
-      if (snapshotVal.status === 'new guess') {
-        return this.quizCoordinator.handleGuessMade(snapshotVal, quizName);
-      }
-    };
 
     ChatRoom.prototype.init = function() {
       var url;
@@ -479,7 +195,6 @@
       if (!this.username) {
         this.username = "anonymous" + Math.floor(Math.random() * 1111);
       }
-      this.quizCoordinator.setUserName(this.username);
       this.userColor = "#" + ((1 << 24) * Math.random() | 0).toString(16);
       this.fbInteractor.fb_instance_users.push({
         name: this.username,
@@ -492,9 +207,10 @@
     ChatRoom.prototype.setupSubmissionBox = function() {
       var _this = this;
       return $("#submission input").on("keydown", function(event) {
-        var emoticon, message, pushedFb, videoToPush, _, _ref;
+        var emoticon, message, messageWithUser, pushedFb, videoToPush;
         if (event.which === 13) {
           message = _this.submissionEl.val();
+          messageWithUser = _this.username + ": " + message;
           console.log(message);
           emoticon = EmotionProcessor.getEmoticon(message);
           if (emoticon) {
@@ -503,17 +219,16 @@
               c: _this.userColor,
               v: _this.videoRecorder.curVideoBlob,
               emoticon: emoticon,
-              choices: EmotionProcessor.makeQuizChoices(emoticon),
-              status: "new quiz",
+              messageCurrent: messageWithUser,
+              messageBefore: _this.messageBefore,
               quickId: Math.floor(Math.random() * 1111)
             };
             pushedFb = _this.fbInteractor.fb_user_video_list.push();
             pushedFb.set(videoToPush);
-            _ref = EmotionProcessor.redactEmoticons(message), message = _ref[0], _ = _ref[1];
             _this.emotionVideoStore.storePushedFb(pushedFb, videoToPush.quickId);
           }
           _this.fbInteractor.fb_instance_stream.push({
-            m: _this.username + ": " + message,
+            m: messageWithUser,
             c: _this.userColor
           });
           return _this.submissionEl.val("");
@@ -523,6 +238,12 @@
 
     ChatRoom.prototype.scrollToBottom = function(wait_time) {
       var _this = this;
+      if (wait_time === 0) {
+        $("html, body").animate({
+          scrollTop: $(document).height()
+        }, 200);
+        return;
+      }
       return setTimeout(function() {
         return $("html, body").animate({
           scrollTop: $(document).height()
@@ -545,6 +266,7 @@
 
     ChatRoom.prototype.displayMessage = function(data) {
       var newMessage, source, video, _ref;
+      this.messageBefore = data.m;
       newMessage = $("<div class='msg' style='color:" + data.c + "'>" + data.m + "</div>");
       newMessage.css("background-color", "#87cefa");
       $("#conversation").append(newMessage);

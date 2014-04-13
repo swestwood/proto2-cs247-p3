@@ -411,7 +411,7 @@ function WhammyRecorder(mediaStream) {
         cancelAnimationFrame(lastAnimationFrame);
 
         endTime = Date.now();
-        console.log('frames captured: ', whammy.frames.length, ' => ', ((endTime - startTime) / 1000), 's video');
+        // console.log('frames captured: ', whammy.frames.length, ' => ', ((endTime - startTime) / 1000), 's video');
 
         whammy.frames = dropFirstFrame(whammy.frames); // First frame is always black. See: https://github.com/muaz-khan/WebRTC-Experiment/issues/94
         var WebM_Blob = whammy.compile();
