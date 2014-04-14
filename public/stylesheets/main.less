@@ -91,7 +91,7 @@ a {
     -webkit-filter: brightness(250%);
   }
   &.highcontrast {
-    -webkit-filter: contrast(500%);
+    -webkit-filter: contrast(400%) brightness(600%);
   }
   &.highsaturate {
     -webkit-filter: saturate(4);
@@ -104,8 +104,8 @@ a {
   //     filter: blur(5px);
   // }
   &.tint {
-    -webkit-filter: sepia(1) hue-rotate(200deg);
-    filter: sepia(1) hue-rotate(200deg);
+    // -webkit-filter: sepia(1) hue-rotate(200deg);
+    -webkit-filter: sepia(1) contrast(150%) hue-rotate(200deg);
   }
   &.invert {
     -webkit-filter: invert(100%);
