@@ -1,15 +1,21 @@
 body {
-  margin: 10px;
+  margin: 0px;
   font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
+  height: 100%;
+}
+#memory_builder {
+  height: 95%;
+  margin: auto 0;
 }
 #memory_builder .panel_wrapper {
   display: inline-block;
   vertical-align: top;
   text-align: center;
-  width: 200px;
-  /* This needs to match the width of the video, set in templateHtml! */
-  padding: 10px
-    border: 1px solid #555;
+  margin-left: 1.5%;
+  height: 100%;
+}
+#memory_builder .panel_wrapper .panel {
+  height: 100%;
 }
 #memory_builder .panel_wrapper .panel .memory_message {
   display: block;
@@ -17,11 +23,69 @@ body {
 a {
   color: #00B7FF;
 }
+.vid_wrapper {
+  height: 100%;
+}
+#titlebar {
+  position: fixed;
+  text-align: center;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 45px;
+  background-color: #dddddd;
+}
+#titlebar p {
+  width: 75%;
+  display: inline-block;
+  font-size: medium;
+  font-weight: bold;
+  color: #666666;
+}
+#build_memory {
+  margin-top: 29px;
+  position: fixed;
+  background-color: white;
+  display: block;
+  height: auto;
+  height: 40%;
+  width: 100%;
+  padding-bottom: 50px;
+}
+#memory_builder_container {
+  position: fixed;
+  width: 100%;
+  padding-left: 20%;
+  height: 30%;
+  -webkit-border-image: url(borders/film-cutout.png) 27 repeat stretch;
+  border-style: solid;
+  border-width: 17px 0px;
+}
+#mem_bkgd img {
+  height: 290px;
+  width: 100%;
+  vertical-stretch: 20%;
+  height: auto;
+}
+.annotation {
+  border: 1px black;
+  font-size: 10px;
+  position: relative;
+  top: -10%;
+  background-color: white;
+}
+#chatbox {
+  padding-top: 200px;
+  display: block;
+  height: 50%;
+}
 #webcam_stream {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  margin: 0 auto;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
   padding: 0;
+  width: 15%;
 }
 #webcam_stream video {
   border: 2px solid #dcc;
@@ -34,17 +98,42 @@ a {
   z-index: 999;
 }
 #conversation {
-  padding: 10px 10px 80px;
-  overflow-y: scroll;
+  padding: 30% 0px 60px 0px;
+  width: 85%;
   height: 100%;
+  margin-left: 0px;
+  overflow-y: auto;
+  vertical-align: top;
+  display: inline-block;
+}
+.msg {
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px;
+  margin: 0 auto;
+  width: 90%;
+  margin-bottom: 0px;
+}
+.msgtext {
+  padding-left: 10%;
+  padding-right: 5%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px;
+  margin: 0 auto;
+  width: 85%;
+  margin-bottom: 0px;
 }
 #submission {
   position: fixed;
-  bottom: 0;
-  width: 100%;
-  right: 0;
+  width: 85%;
   border-top: 2px solid #dcc;
+  border-bottom: 1px solid #818181;
   background: #fff;
+  left: 0;
+  bottom: 0;
 }
 #submission input {
   border: none;

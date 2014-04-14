@@ -115,18 +115,24 @@ class window.MemoryBuilder
 class window.ChatRoom
   """Main class to control the chat room UI of messages and video"""
   constructor: (@fbInteractor, @videoRecorder) ->
+    context = []
+    $("#entire_memory_wrapper").html(Templates["memoryWrapper"](context))
+    @lastPoster = null
+    @backgroundColor = "#ffddc7"
     @emotionVideoStore = new EmotionVideoStore()
     @messageBefore = ""
     @memoryBuilder = new MemoryBuilder($("#memory_builder_container"), @emotionVideoStore)
 
     # Listen to Firebase events
     @fbInteractor.fb_instance_users.on "child_added", (snapshot) =>
-      @displayMessage({m: snapshot.val().name + " joined the room", c: snapshot.val().c})
+      @displayMessage({m: " joined the room", c: snapshot.val().c, u: snapshot.val().name, j: "joined"})
       @emotionVideoStore.addUser(snapshot.val().name)
 
     @fbInteractor.fb_instance_stream.on "child_added", (snapshot) =>
-      @displayMessage(snapshot.val())
-
+      msg = snapshot.val().m
+      username = msg.substr(0, msg.indexOf(":"))
+      spliced_message = msg.substr(msg.indexOf(":") + 1)
+      @displayMessage({m: spliced_message, c: snapshot.val().c, u: username})
 
     @fbInteractor.fb_user_video_list.on "child_added", (snapshot) =>
       @emotionVideoStore.addVideoSnapshot(snapshot.val())
@@ -177,11 +183,14 @@ class window.ChatRoom
 
   scrollToBottom: (wait_time) =>
     # scroll to bottom of div
+    chatElem = document.getElementById('conversation')
     if wait_time == 0
-      $("html, body").animate({ scrollTop: $(document).height() }, 200)
+      #chatElem.scrollTop = chatElem.scrollHeight
+      $("html,body").animate({ scrollTop: $(document).height() }, 200)
       return
     setTimeout =>
-      $("html, body").animate({ scrollTop: $(document).height() }, 200)
+      #chatElem.scrollTop = chatElem.scrollHeight
+      $("html,body").animate({ scrollTop: $(document).height() }, 200)
     , wait_time
 
   createVideoElem: (video_data) =>
@@ -203,10 +212,37 @@ class window.ChatRoom
 
   # creates a message node and appends it to the conversation
   displayMessage: (data) =>
-    @messageBefore = data.m  # Store the last chat message for the next call
-    newMessage = $("<div class='msg' style='color:"+data.c+"'>"+data.m+"</div>")
-    newMessage.css("background-color", "#87cefa")
-    $("#conversation").append(newMessage)
+    @messageBefore = data.m 
+    changePoster = false
+    if @lastPoster == null
+      @lastPoster = data.u
+    else
+      if (@lastPoster != data.u)
+        @lastPoster = data.u
+        if @backgroundColor == "#f8ede6"
+          @backgroundColor = "#ffddc7"
+        else @backgroundColor = "#f8ede6"
+        changePoster = true
+    if changePoster
+      if data.j == "joined"
+        # poster just joined the room
+        newHeader = $("<div class='msg' style='color:"+data.c+"'>"+data.u+data.m+"</div>")
+        newMessage = null
+      else
+        newHeader = $("<div class='msg' style='color:"+data.c+"'>"+data.u+"</div>")
+        newMessage = $("<div class='msgtext' style='color:"+data.c+"'>"+data.m+"</div>")
+    else 
+      newHeader = null
+      newMessage = $("<div class='msgtext' style='color:"+data.c+"'>"+data.m+"</div>")
+    
+    if newHeader != null
+      newHeader.css("font-weight", "bold")
+      newHeader.css("font-style", "16px")
+      newHeader.css("background-color", @backgroundColor)
+      $("#conversation").append(newHeader)
+    if newMessage != null
+      newMessage.css("background-color", @backgroundColor)
+      $("#conversation").append(newMessage)
     if data.v
       [source, video] = @createVideoElem(data.v)
       video.appendChild(source)
