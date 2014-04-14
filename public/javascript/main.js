@@ -168,6 +168,12 @@
     };
 
     MemoryBuilder.prototype.respondToSetMemory = function(context) {
+      var panel, _i, _len, _ref;
+      _ref = context.panels;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        panel = _ref[_i];
+        panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v));
+      }
       return $("#memory_builder_container").html(Templates["memoryBuilder"](context));
     };
 

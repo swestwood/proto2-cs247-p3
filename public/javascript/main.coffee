@@ -125,6 +125,8 @@ class window.MemoryBuilder
     console.log context
 
   respondToSetMemory: (context) =>
+    for panel in context.panels
+      panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v))  # Make a new local URL for the video to show up
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
 
 
