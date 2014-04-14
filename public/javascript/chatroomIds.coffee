@@ -224,7 +224,6 @@ window.listOfAdjectives = [
     "different",
     "difficult",
     "doubtful",
-    "easy",
     "edible",
     "expensive",
     "famous",
