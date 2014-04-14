@@ -6,7 +6,7 @@
 
   window.buildTemplates = function() {
     var handlebarsElems, memoryBuilderHandlebars;
-    memoryBuilderHandlebars = "<div id=\"memory_builder\">\n<h3>Panels:</h3>\n{{#if memoryUrl}}\n  <h5>Keep this memory forever: <a href=\"{{memoryUrl}}\" target=\"_blank\">{{memoryUrl}}</a></h5>\n{{/if}}\n{{#each panels}}<div class=\"panel_wrapper\" {{panelIndex}}\">\n  <div class=\"panel\">  {{!-- {{Comment: the width here needs to match the width in the CSS for .panel_wrapper! }} --}}\n    <video autoplay=\"\" loop=\"\" width=\"200\"><source src=\"{{video.videoUrl}}\"></video>\n    <span class=\"memory_message\">{{video.messageBefore}}</span>\n    <span class=\"memory_message\">{{video.messageCurrent}}</span>\n  </div>\n</div>{{/each}}";
+    memoryBuilderHandlebars = "<div id=\"memory_builder\">\n<h3>Panels:</h3>\n{{#if memoryUrl}}\n  <h5>Keep this memory forever: <a href=\"{{memoryUrl}}\" target=\"_blank\">{{memoryUrl}}</a></h5>\n{{/if}}\n{{#each panels}}<div class=\"panel_wrapper\" {{panelIndex}}\">\n  <div class=\"panel\">  {{!-- {{Comment: the width here needs to match the width in the CSS for .panel_wrapper! }} --}}\n    <video autoplay=\"\" loop=\"\" width=\"200\" class=\"effect {{effect}}\"><source src=\"{{video.videoUrl}}\"></video>\n    <span class=\"memory_message\">{{video.messageBefore}}</span>\n    <span class=\"memory_message\">{{video.messageCurrent}}</span>\n  </div>\n</div>{{/each}}";
     handlebarsElems = {
       "memoryBuilder": memoryBuilderHandlebars
     };

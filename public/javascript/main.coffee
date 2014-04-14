@@ -22,7 +22,7 @@ window.EMOTICON_MAP =
   "heart": ["<3"]
   "broken": ["</3"]
 
-window.VIDEO_LENGTH_MS = 1000  # The length of time that the snippets are recorded  # TODO make longer after testing
+window.VIDEO_LENGTH_MS = 3000  # The length of time that the snippets are recorded  # TODO make longer after testing
 
 class window.FirebaseInteractor
   """Connects to Firebase and connects to chatroom variables."""
@@ -109,10 +109,12 @@ class window.MemoryBuilder
     context =
       panels: []
     panelNames = ["first", "second", "third", "fourth"]
+    effects = ["sepia", "brightness", "highcontrast", "highsaturate", "huerotate", "tint", "", "invert"]
     chosenVideos = @emotionVideoStore.sampleRandomVideos(_.size(panelNames))
+    chosenEffects = _.sample(effects, _.size(panelNames))
     for panelI in [0..._.size(panelNames)]
       chosenVideo = chosenVideos[panelI]
-      context.panels.push({"video": chosenVideo, "panelIndex": panelNames[panelI]})
+      context.panels.push({"video": chosenVideo, "panelIndex": panelNames[panelI], "effect": chosenEffects[panelI]})
     console.log "html: "
     Templates["memoryBuilder"](context)
     console.log $("#memory_builder_container")

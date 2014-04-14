@@ -20,7 +20,7 @@
     "broken": ["</3"]
   };
 
-  window.VIDEO_LENGTH_MS = 1000;
+  window.VIDEO_LENGTH_MS = 3000;
 
   window.FirebaseInteractor = (function() {
     "Connects to Firebase and connects to chatroom variables.";
@@ -140,18 +140,21 @@
     }
 
     MemoryBuilder.prototype.randomlyMakeMemory = function() {
-      var chosenVideo, chosenVideos, context, memoryId, panelI, panelNames, savedMemory, savedMemoryContext, _i, _ref;
+      var chosenEffects, chosenVideo, chosenVideos, context, effects, memoryId, panelI, panelNames, savedMemory, savedMemoryContext, _i, _ref;
       console.log("randomly making memory");
       context = {
         panels: []
       };
       panelNames = ["first", "second", "third", "fourth"];
+      effects = ["sepia", "brightness", "highcontrast", "highsaturate", "huerotate", "tint", "", "invert"];
       chosenVideos = this.emotionVideoStore.sampleRandomVideos(_.size(panelNames));
+      chosenEffects = _.sample(effects, _.size(panelNames));
       for (panelI = _i = 0, _ref = _.size(panelNames); 0 <= _ref ? _i < _ref : _i > _ref; panelI = 0 <= _ref ? ++_i : --_i) {
         chosenVideo = chosenVideos[panelI];
         context.panels.push({
           "video": chosenVideo,
-          "panelIndex": panelNames[panelI]
+          "panelIndex": panelNames[panelI],
+          "effect": chosenEffects[panelI]
         });
       }
       console.log("html: ");

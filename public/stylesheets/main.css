@@ -65,3 +65,32 @@ a {
   text-align: center;
   padding: 50px 0;
 }
+.effect {
+  /* Drawn from http://bennettfeely.com/filters/*/
+}
+.effect.sepia {
+  -webkit-filter: sepia(100%);
+}
+.effect.brightness {
+  -webkit-filter: brightness(250%);
+}
+.effect.highcontrast {
+  -webkit-filter: contrast(500%);
+}
+.effect.highsaturate {
+  -webkit-filter: saturate(4);
+}
+.effect.huerotate {
+  -webkit-filter: contrast(200%) hue-rotate(300deg);
+}
+.effect.blur {
+  -webkit-filter: blur(3px);
+  filter: blur(5px);
+}
+.effect.tint {
+  -webkit-filter: sepia(1) hue-rotate(200deg);
+  filter: sepia(1) hue-rotate(200deg);
+}
+.effect.invert {
+  -webkit-filter: invert(100%);
+}
