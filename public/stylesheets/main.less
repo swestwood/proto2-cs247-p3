@@ -6,6 +6,15 @@ body {
   overflow: hidden;
 }
 
+@media only screen and (max-width: 999px) {
+  /* rules that only apply for canvases narrower than 1000px */
+  // todo http://foundation.zurb.com/docs/media-queries.html
+  video {
+    width: 165px;
+  }
+}
+
+
 #memory_builder {
   // height:95%;
   text-align: center;
@@ -14,9 +23,10 @@ body {
     width: 200px;
     height: 177px; // to match the videos
     color: white;
+    vertical-align: center;
     background-color: lightblue;
     display: inline-block;
-    margin-left: 20px;
+    margin-left: 2%;
     // from http://www.cssmatic.com/gradient-generator
     background: rgba(239,197,202,1);
     background: -webkit-radial-gradient(center, ellipse cover, rgba(239,197,202,1) 0%, rgba(255,108,54,1) 50%, rgba(255,56,79,1) 51%, rgba(51,0,255,1) 100%);
@@ -27,7 +37,7 @@ body {
     display: inline-block;
     vertical-align: top;
     text-align: center;
-    margin-left: 30px;
+    margin-left: 2%;
     // height:100%;
     video {
       width: 200px;

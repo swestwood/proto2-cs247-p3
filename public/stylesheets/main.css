@@ -3,6 +3,12 @@ body {
   font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
   overflow: hidden;
 }
+@media only screen and (max-width: 999px) {
+  /* rules that only apply for canvases narrower than 1000px */
+  video {
+    width: 165px;
+  }
+}
 #memory_builder {
   text-align: center;
   margin: auto 0;
@@ -11,9 +17,10 @@ body {
   width: 200px;
   height: 177px;
   color: white;
+  vertical-align: center;
   background-color: lightblue;
   display: inline-block;
-  margin-left: 20px;
+  margin-left: 2%;
   background: #efc5ca;
   background: -webkit-radial-gradient(center, ellipse cover, #efc5ca 0%, #ff6c36 50%, #ff384f 51%, #3300ff 100%);
   background: radial-gradient(ellipse at center, #efc5ca 0%, #ff6c36 50%, #ff384f 51%, #3300ff 100%);
@@ -23,7 +30,7 @@ body {
   display: inline-block;
   vertical-align: top;
   text-align: center;
-  margin-left: 30px;
+  margin-left: 2%;
 }
 #memory_builder .panel_wrapper video {
   width: 200px;
