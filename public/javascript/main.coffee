@@ -161,6 +161,8 @@ class window.ChatRoom
       @emotionVideoStore.removeVideoSnapshot(snapshot.val())
 
     @fbInteractor.fb_memory.on "value", (snapshot) =>
+      if not snapshot or not snapshot.val()
+        return
       @memoryBuilder.respondToSetMemory(snapshot.val())
 
     @submissionEl = $("#submission input")
@@ -292,7 +294,8 @@ class StandAloneMemory
         return
       for panel in context.panels
         panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v))
-      $("body").html(Templates["memoryBuilder"](context))
+      $("body").html(Templates["memoryWrapper"]({"standalone": true}))
+      $("#memory_builder_container").html(Templates["memoryBuilder"](context))
 
 
 # Start everything!
