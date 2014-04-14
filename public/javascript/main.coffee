@@ -169,7 +169,7 @@ class window.ChatRoom
 
   init: =>
     url = document.location.origin+"/#"+@fbInteractor.fb_chat_room_id
-    @displayMessage({m: "Share this url with your friend to join this chat: <a href='" + url + "' target='_blank'>" + url+"</a>", c: "darkred"})
+    @displayMessage({m: "Share this url with your friend to join this chat: <a href='" + url + "' target='_blank'>" + url+"</a>", c: "darkred", s: "share"})
     # Block until user name entered
     if not @username
       @username = "anonymous"+Math.floor(Math.random()*1111)
