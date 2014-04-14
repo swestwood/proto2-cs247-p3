@@ -27,7 +27,7 @@
     function FirebaseInteractor() {
       this.initMemoryVersion = __bind(this.initMemoryVersion, this);
       this.init = __bind(this.init, this);
-      this.fb_instance = new Firebase("https://proto1-cs247-p3-fb.firebaseio.com");
+      this.fb_instance = new Firebase("https://proto2-cs247-p3-fb.firebaseio.com");
     }
 
     FirebaseInteractor.prototype.init = function() {
@@ -157,10 +157,7 @@
           "effect": chosenEffects[panelI]
         });
       }
-      console.log("html: ");
-      Templates["memoryBuilder"](context);
-      console.log($("#memory_builder_container"));
-      memoryId = "memory-" + _.sample(window.listOfAnimals) + "-" + window.getRandomAnimalNumber();
+      memoryId = "memory-" + _.sample(window.listOfAdjectives) + "-" + _.sample(window.listOfAnimals) + "-" + _.random(1, 1000);
       savedMemory = this.fbInteractor.fb_memories.child(memoryId);
       savedMemoryContext = savedMemory.child("context");
       savedMemoryContext.set(context);
@@ -253,7 +250,7 @@
               emoticon: emoticon,
               messageCurrent: messageWithUser,
               messageBefore: _this.messageBefore,
-              quickId: Math.floor(Math.random() * 1111)
+              quickId: _.random(1, 1000000)
             };
             pushedFb = _this.fbInteractor.fb_user_video_list.push();
             pushedFb.set(videoToPush);

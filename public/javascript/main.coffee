@@ -27,7 +27,7 @@ window.VIDEO_LENGTH_MS = 3000  # The length of time that the snippets are record
 class window.FirebaseInteractor
   """Connects to Firebase and connects to chatroom variables."""
   constructor: ->
-    @fb_instance = new Firebase("https://proto1-cs247-p3-fb.firebaseio.com")
+    @fb_instance = new Firebase("https://proto2-cs247-p3-fb.firebaseio.com")
 
   init: =>
     # set up variables to access firebase data structure
@@ -115,10 +115,7 @@ class window.MemoryBuilder
     for panelI in [0..._.size(panelNames)]
       chosenVideo = chosenVideos[panelI]
       context.panels.push({"video": chosenVideo, "panelIndex": panelNames[panelI], "effect": chosenEffects[panelI]})
-    console.log "html: "
-    Templates["memoryBuilder"](context)
-    console.log $("#memory_builder_container")
-    memoryId = "memory-" + _.sample(window.listOfAnimals)  + "-" + window.getRandomAnimalNumber()
+    memoryId = "memory-" +  _.sample(window.listOfAdjectives) + "-" + _.sample(window.listOfAnimals)  + "-" + _.random(1, 1000)
     savedMemory = @fbInteractor.fb_memories.child(memoryId)
     savedMemoryContext = savedMemory.child("context")
     savedMemoryContext.set(context)
@@ -188,7 +185,7 @@ class window.ChatRoom
             emoticon: emoticon
             messageCurrent: messageWithUser
             messageBefore: @messageBefore
-            quickId: Math.floor(Math.random()*1111)
+            quickId: _.random(1, 1000000)
           pushedFb = @fbInteractor.fb_user_video_list.push()
           pushedFb.set(videoToPush)
           # We need to store the name so that we can retrieve it and remove the video
