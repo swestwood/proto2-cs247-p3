@@ -22,12 +22,12 @@ window.EMOTICON_MAP =
   "heart": ["<3"]
   "broken": ["</3"]
 
-window.VIDEO_LENGTH_MS = 1000  # The length of time that the snippets are recorded  # TODO make longer after testing
+window.VIDEO_LENGTH_MS = 3000  # The length of time that the snippets are recorded  # TODO make longer after testing
 
 class window.FirebaseInteractor
   """Connects to Firebase and connects to chatroom variables."""
   constructor: ->
-    @fb_instance = new Firebase("https://proto1-cs247-p3-fb.firebaseio.com")
+    @fb_instance = new Firebase("https://proto2-cs247-p3-fb.firebaseio.com")
 
   init: =>
     # set up variables to access firebase data structure
@@ -36,6 +36,11 @@ class window.FirebaseInteractor
     @fb_instance_users = @fb_new_chat_room.child('users')
     @fb_instance_stream = @fb_new_chat_room.child('stream')
     @fb_user_video_list = @fb_new_chat_room.child('user_video_list')
+    @fb_memory = @fb_new_chat_room.child('memory')
+    @fb_memories = @fb_instance.child('memories')
+
+  initMemoryVersion: =>
+    @fb_memories = @fb_instance.child('memories')
 
 
 class window.EmotionVideoStore
@@ -73,13 +78,15 @@ class window.EmotionVideoStore
     console.log @videos
     console.log data
 
-  getRandomVideo: =>
+  sampleRandomVideos: (sampleSize) =>
     allVideos = _.flatten(_.values(@videos)) # One list of all the videos
     if _.isEmpty(allVideos)
       console.error "Cannot get random video URL, no videos exist"
       return undefined
-    return _.sample(allVideos)
-
+    sampled = _.sample(allVideos, sampleSize)
+    while _.size(sampled) < sampleSize
+      sampled.push(_.sample(allVideos))  # Add on random videos until we have enough videos, if there are fewer than sampleSize total.
+    return sampled
 
   removeVideoItem: (video, fb_video_list) =>
     if video.quickId not of @fbResults
@@ -94,22 +101,34 @@ class window.EmotionVideoStore
 
 class window.MemoryBuilder
 
-  constructor: (@elem, @emotionVideoStore) ->
+  constructor: (@elem, @emotionVideoStore, @fbInteractor) ->
     $("#make_memory_button").on("click", @randomlyMakeMemory)
 
   randomlyMakeMemory: =>
     console.log "randomly making memory"
     context =
       panels: []
-    for panelIndex in ["first", "second", "third", "fourth"]
-      chosenVideo = @emotionVideoStore.getRandomVideo()
-      console.log "got a random memory"
-      context.panels.push({"video": chosenVideo, "panelIndex": panelIndex})
-    console.log "html: "
-    Templates["memoryBuilder"](context)
-    console.log $("#memory_builder_container")
+    panelNames = ["first", "second", "third", "fourth"]
+    effects = ["sepia", "brightness", "highcontrast", "highsaturate", "huerotate", "tint", "", "invert"]
+    chosenVideos = @emotionVideoStore.sampleRandomVideos(_.size(panelNames))
+    chosenEffects = _.sample(effects, _.size(panelNames))
+    for panelI in [0..._.size(panelNames)]
+      chosenVideo = chosenVideos[panelI]
+      context.panels.push({"video": chosenVideo, "panelIndex": panelNames[panelI], "effect": chosenEffects[panelI]})
+    memoryId = "memory-" +  _.sample(window.listOfAdjectives) + "-" + _.sample(window.listOfAnimals)  + "-" + _.random(1, 1000)
+    savedMemory = @fbInteractor.fb_memories.child(memoryId)
+    savedMemoryContext = savedMemory.child("context")
+    savedMemoryContext.set(context)
+    context.memoryUrl = document.location.origin+"/#&" + memoryId
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
+    @fbInteractor.fb_memory.set(context)
     console.log context
+
+  respondToSetMemory: (context) =>
+    for panel in context.panels
+      panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v))  # Make a new local URL for the video to show up
+    $("#memory_builder_container").html(Templates["memoryBuilder"](context))
+
 
 
 class window.ChatRoom
@@ -121,7 +140,7 @@ class window.ChatRoom
     @backgroundColor = "#ffddc7"
     @emotionVideoStore = new EmotionVideoStore()
     @messageBefore = ""
-    @memoryBuilder = new MemoryBuilder($("#memory_builder_container"), @emotionVideoStore)
+    @memoryBuilder = new MemoryBuilder($("#memory_builder_container"), @emotionVideoStore, @fbInteractor)
 
     # Listen to Firebase events
     @fbInteractor.fb_instance_users.on "child_added", (snapshot) =>
@@ -136,9 +155,13 @@ class window.ChatRoom
 
     @fbInteractor.fb_user_video_list.on "child_added", (snapshot) =>
       @emotionVideoStore.addVideoSnapshot(snapshot.val())
+      $("#make_memory_button").css({"visibility": "visible"})
 
     @fbInteractor.fb_user_video_list.on "child_removed", (snapshot) =>
       @emotionVideoStore.removeVideoSnapshot(snapshot.val())
+
+    @fbInteractor.fb_memory.on "value", (snapshot) =>
+      @memoryBuilder.respondToSetMemory(snapshot.val())
 
     @submissionEl = $("#submission input")
 
@@ -170,7 +193,7 @@ class window.ChatRoom
             emoticon: emoticon
             messageCurrent: messageWithUser
             messageBefore: @messageBefore
-            quickId: Math.floor(Math.random()*1111)
+            quickId: _.random(1, 1000000)
           pushedFb = @fbInteractor.fb_user_video_list.push()
           pushedFb.set(videoToPush)
           # We need to store the name so that we can retrieve it and remove the video
@@ -250,15 +273,40 @@ class window.ChatRoom
     # Scroll to the bottom every time we display a new message
     @scrollToBottom(0);
 
+class StandAloneMemory
+
+  constructor: (@memoryId, @fbInteractor) ->
+    @memoryItem = @fbInteractor.fb_instance.child('memories').child(@memoryId).child("context")
+    if not @memoryItem
+      console.error "memory item not found.. "
+      $("body").html("<h3>Sorry, memory could not be found</h3>")
+      return
+
+    @memoryItem.on "value", (snapshot) =>
+      context = snapshot.val()
+      console.log context
+      if not context
+        $("body").html("<h3>Sorry, this memory could not be found. Check the URL. Or make a new memory!</h3>")
+        return
+      for panel in context.panels
+        panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v))
+      $("body").html(Templates["memoryBuilder"](context))
+
 
 # Start everything!
 $(document).ready ->
   fbInteractor = new FirebaseInteractor()
-  fbInteractor.init()
-  videoRecorder = new VideoRecorder()
-  chatRoom = new ChatRoom(fbInteractor, videoRecorder)
-  chatRoom.init()
-  videoRecorder.connectWebcam()
+  memoryId = window.get_memory_id()
+  if memoryId
+    $("#waiting").remove()
+    fbInteractor.initMemoryVersion()
+    standAloneMemory = new StandAloneMemory(memoryId, fbInteractor)
+  else
+    fbInteractor.init()
+    videoRecorder = new VideoRecorder()
+    chatRoom = new ChatRoom(fbInteractor, videoRecorder)
+    chatRoom.init()
+    videoRecorder.connectWebcam()
 
 
 

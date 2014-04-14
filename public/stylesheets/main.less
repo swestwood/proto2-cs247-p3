@@ -178,3 +178,51 @@ a {
   text-align: center;
   padding: 50px 0;
 }
+
+.effect {
+  /* Drawn from http://bennettfeely.com/filters/*/
+  // &.grayscale {
+  //   // -webkit-filter: contrast(140%) grayscale(90%);
+  //   -webkit-filter: grayscale(1) brightness(0.75) contrast(1.05);
+  // }
+  &.sepia {
+    -webkit-filter: sepia(100%);
+  }
+  &.brightness {
+    -webkit-filter: brightness(250%);
+  }
+  &.highcontrast {
+    -webkit-filter: contrast(400%) brightness(600%);
+  }
+  &.highsaturate {
+    -webkit-filter: saturate(4);
+  }
+  &.huerotate {
+    -webkit-filter: contrast(200%) hue-rotate(300deg)
+  }
+  // &.blur {
+  //     -webkit-filter: blur(3px);
+  //     filter: blur(5px);
+  // }
+  &.tint {
+    // -webkit-filter: sepia(1) hue-rotate(200deg);
+    -webkit-filter: sepia(1) contrast(150%) hue-rotate(200deg);
+  }
+  &.invert {
+    -webkit-filter: invert(100%);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
