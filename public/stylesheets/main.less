@@ -8,15 +8,29 @@ body {
 
 #memory_builder {
   // height:95%;
+  text-align: center;
   margin: auto 0;
+  .first-panel {
+    width: 200px;
+    height: 177px; // to match the videos
+    color: white;
+    background-color: lightblue;
+    display: inline-block;
+    margin-left: 20px;
+    // from http://www.cssmatic.com/gradient-generator
+    background: rgba(239,197,202,1);
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(239,197,202,1) 0%, rgba(255,108,54,1) 50%, rgba(255,56,79,1) 51%, rgba(51,0,255,1) 100%);
+    background: radial-gradient(ellipse at center, rgba(239,197,202,1) 0%, rgba(255,108,54,1) 50%, rgba(255,56,79,1) 51%, rgba(51,0,255,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efc5ca', endColorstr='#3300ff', GradientType=1 );
+  }
   .panel_wrapper {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: top;
     text-align: center;
-    // margin-left:1.5%;
+    margin-left: 30px;
     // height:100%;
     video {
-      // width: 300px;
+      width: 200px;
     }
     //width: 18.5%; /* This needs to match the width of the video, set in templateHtml! */
     .panel {
@@ -60,6 +74,7 @@ a {
   display:block;
   height:auto;
   // height: 40%;
+  margin-top: 40px;
   vertical-align: top;
   width:100%;
   padding-bottom:50px;
@@ -122,7 +137,6 @@ a {
 
 #conversation{
   /* padding: 0px 0px 60px 0px; */
-  background-color: rgb(215, 213, 255);
   width: 100%;
   position: absolute;
   /* height: 400px; */
@@ -149,8 +163,7 @@ a {
 .msgtext {
   padding-left:10%;
   padding-right:5%;
-  padding-top:3px;
-  padding-bottom:3px;
+  padding-bottom:7px;
   border-bottom:1px;
   margin: 0 auto;
   width: 85%;

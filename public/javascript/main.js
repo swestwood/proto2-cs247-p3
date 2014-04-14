@@ -136,6 +136,9 @@
       this.fbInteractor = fbInteractor;
       this.respondToSetMemory = __bind(this.respondToSetMemory, this);
       this.randomlyMakeMemory = __bind(this.randomlyMakeMemory, this);
+      this.elem.html(Templates["memoryBuilder"]({
+        "waitingForVideo": true
+      }));
       $("#make_memory_button").on("click", this.randomlyMakeMemory);
     }
 
@@ -163,6 +166,7 @@
       savedMemoryContext.set(context);
       context.memoryUrl = document.location.origin + "/#&" + memoryId;
       $("#memory_builder_container").html(Templates["memoryBuilder"](context));
+      $("#make_memory_button").on("click", this.randomlyMakeMemory);
       this.fbInteractor.fb_memory.set(context);
       return console.log(context);
     };
@@ -174,7 +178,8 @@
         panel = _ref[_i];
         panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v));
       }
-      return $("#memory_builder_container").html(Templates["memoryBuilder"](context));
+      $("#memory_builder_container").html(Templates["memoryBuilder"](context));
+      return $("#make_memory_button").on("click", this.randomlyMakeMemory);
     };
 
     return MemoryBuilder;
@@ -222,9 +227,11 @@
       });
       this.fbInteractor.fb_user_video_list.on("child_added", function(snapshot) {
         _this.emotionVideoStore.addVideoSnapshot(snapshot.val());
-        return $("#make_memory_button").css({
+        $("#make_memory_button").css({
           "visibility": "visible"
         });
+        $("#make_memory_button").on("click", _this.randomlyMakeMemory);
+        return $(".instructions-memory").hide();
       });
       this.fbInteractor.fb_user_video_list.on("child_removed", function(snapshot) {
         return _this.emotionVideoStore.removeVideoSnapshot(snapshot.val());
@@ -392,9 +399,8 @@
           panel = _ref[_i];
           panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v));
         }
-        $("body").html(Templates["memoryWrapper"]({
-          "standalone": true
-        }));
+        context.standalone = true;
+        $("body").html(Templates["memoryWrapper"]());
         return $("#memory_builder_container").html(Templates["memoryBuilder"](context));
       });
     }

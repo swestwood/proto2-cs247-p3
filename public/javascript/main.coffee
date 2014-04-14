@@ -102,7 +102,9 @@ class window.EmotionVideoStore
 class window.MemoryBuilder
 
   constructor: (@elem, @emotionVideoStore, @fbInteractor) ->
+    @elem.html(Templates["memoryBuilder"]({"waitingForVideo": true}))
     $("#make_memory_button").on("click", @randomlyMakeMemory)
+
 
   randomlyMakeMemory: =>
     console.log "randomly making memory"
@@ -121,6 +123,8 @@ class window.MemoryBuilder
     savedMemoryContext.set(context)
     context.memoryUrl = document.location.origin+"/#&" + memoryId
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
+    $("#make_memory_button").on("click", @randomlyMakeMemory)
+
     @fbInteractor.fb_memory.set(context)
     console.log context
 
@@ -128,6 +132,8 @@ class window.MemoryBuilder
     for panel in context.panels
       panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v))  # Make a new local URL for the video to show up
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
+    $("#make_memory_button").on("click", @randomlyMakeMemory)
+
 
 
 
@@ -156,6 +162,8 @@ class window.ChatRoom
     @fbInteractor.fb_user_video_list.on "child_added", (snapshot) =>
       @emotionVideoStore.addVideoSnapshot(snapshot.val())
       $("#make_memory_button").css({"visibility": "visible"})
+      $("#make_memory_button").on("click", @randomlyMakeMemory)
+      $(".instructions-memory").hide()
 
     @fbInteractor.fb_user_video_list.on "child_removed", (snapshot) =>
       @emotionVideoStore.removeVideoSnapshot(snapshot.val())
@@ -240,7 +248,7 @@ class window.ChatRoom
 
   # creates a message node and appends it to the conversation
   displayMessage: (data) =>
-    @messageBefore = data.m 
+    @messageBefore = data.m
     changePoster = false
     if @lastPoster == null
       @lastPoster = data.u
@@ -295,7 +303,8 @@ class StandAloneMemory
         return
       for panel in context.panels
         panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v))
-      $("body").html(Templates["memoryWrapper"]({"standalone": true}))
+      context.standalone = true
+      $("body").html(Templates["memoryWrapper"]())
       $("#memory_builder_container").html(Templates["memoryBuilder"](context))
 
 
