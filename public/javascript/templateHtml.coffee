@@ -11,7 +11,7 @@ window.buildTemplates = =>
   {{/if}}
   {{#each panels}}<div class="panel_wrapper" {{panelIndex}}">
     <div class="panel">  {{!-- {{Comment: the width here needs to match the width in the CSS for .panel_wrapper! }} --}}
-      <div class="vid_wrapper"><video autoplay="" loop="" class="effect {{effect}}" height="100%"><source src="{{video.videoUrl}}" type="video/webm"></video></div>
+      <div class="vid_wrapper"><video autoplay="" loop="" class="effect {{effect}}" width=200px><source src="{{video.videoUrl}}" type="video/webm"></video></div>
       <div class="annotation">
         <span class="memory_message">{{video.messageBefore}}</span>
         <span class="memory_message">{{video.messageCurrent}}</span>

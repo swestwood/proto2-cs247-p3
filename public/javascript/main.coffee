@@ -184,8 +184,9 @@ class window.ChatRoom
     $("#submission input").on "keydown", (event) =>
       if event.which == 13  # ENTER
         message = @submissionEl.val()
+
         messageWithUser = @username + ": " + message
-        console.log(message)
+        console.log messageWithUser
         emoticon = EmotionProcessor.getEmoticon(message)
         if emoticon
           videoToPush =
@@ -210,12 +211,12 @@ class window.ChatRoom
     # scroll to bottom of div
     chatElem = document.getElementById('conversation')
     if wait_time == 0
-      #chatElem.scrollTop = chatElem.scrollHeight
-      $("html,body").animate({ scrollTop: $(document).height() }, 200)
+      chatElem.scrollTop = chatElem.scrollHeight
+      # $("html,body").animate({ scrollTop: $(document).height() }, 200)
       return
     setTimeout =>
-      #chatElem.scrollTop = chatElem.scrollHeight
-      $("html,body").animate({ scrollTop: $(document).height() }, 200)
+      chatElem.scrollTop = chatElem.scrollHeight
+      # $("html,body").animate({ scrollTop: $(document).height() }, 200)
     , wait_time
 
   createVideoElem: (video_data) =>

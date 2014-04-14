@@ -264,7 +264,7 @@
         if (event.which === 13) {
           message = _this.submissionEl.val();
           messageWithUser = _this.username + ": " + message;
-          console.log(message);
+          console.log(messageWithUser);
           emoticon = EmotionProcessor.getEmoticon(message);
           if (emoticon) {
             videoToPush = {
@@ -294,15 +294,11 @@
         _this = this;
       chatElem = document.getElementById('conversation');
       if (wait_time === 0) {
-        $("html,body").animate({
-          scrollTop: $(document).height()
-        }, 200);
+        chatElem.scrollTop = chatElem.scrollHeight;
         return;
       }
       return setTimeout(function() {
-        return $("html,body").animate({
-          scrollTop: $(document).height()
-        }, 200);
+        return chatElem.scrollTop = chatElem.scrollHeight;
       }, wait_time);
     };
 
