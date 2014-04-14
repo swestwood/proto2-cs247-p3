@@ -8,7 +8,20 @@
     if (url_segments[1]) {
       return url_segments[1];
     }
+    return getRandomAnimalNumber();
+  };
+
+  window.getRandomAnimalNumber = function() {
     return _.sample(window.listOfAnimals) + _.random(1, 100);
+  };
+
+  window.get_memory_id = function() {
+    var url_segments;
+    url_segments = document.location.href.split("/#&");
+    if (url_segments[1]) {
+      return url_segments[1];
+    }
+    return null;
   };
 
   window.listOfAnimals = ["aardvark", "albatross", "alligator", "alpaca", "ant", "anteater", "antelope", "ape", "donkey", "badger", "bat", "bear", "beaver", "bee", "bison", "buffalo", "butterfly", "camel", "caribou", "cat", "caterpillar", "cattle", "cheetah", "chicken", "chinchilla", "clam", "cobra", "coyote", "crab", "crane", "crocodile", "crow", "deer", "dinosaur", "dog", "dogfish", "dolphin", "dove", "dragonfly", "duck", "eagle", "eel", "elephant", "elk", "falcon", "finch", "fish", "flamingo", "fly", "fox", "frog", "gazelle", "gerbil", "panda", "giraffe", "gnat", "goat", "goose", "goldfinch", "goldfish", "grasshopper", "hamster", "hare", "hawk", "hedgehog", "heron", "hornet", "hippo", "horse", "hummingbird", "hyena", "jaguar", "jay", "jellyfish", "kangaroo", "lark", "lemur", "lion", "leopard", "llama", "lyrebird", "magpie", "manatee", "meerkat", "mole", "monkey", "marten", "moose", "mouse", "newt", "narwhal", "mule", "nightingale", "octopus", "otter", "owl", "oyster", "panther", "parrot", "partridge", "pelican", "penguin", "pig", "pigeon", "pony", "porcupine", "porpoise", "quail", "rabbit", "raccoon", "ram", "rat", "raven", "reindeer", "salmon", "salamander", "scorpion", "seal", "shark", "sheep", "shrimp", "snail", "snake", "squid", "squirrel", "starling", "swallow", "swan", "tiger", "turkey", "trout", "turtle", "vulture", "whale", "wolf", "wolverine", "woodpecker", "yak", "zebra"];

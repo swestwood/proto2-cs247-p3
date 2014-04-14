@@ -3,7 +3,15 @@ window.get_fb_chat_room_id = =>
     url_segments = document.location.href.split("/#")
     if url_segments[1]
       return url_segments[1]
+    return getRandomAnimalNumber()
+
+window.getRandomAnimalNumber = =>
     return _.sample(window.listOfAnimals) + _.random(1, 100)
+
+window.get_memory_id = =>
+    url_segments = document.location.href.split("/#&")
+    return url_segments[1] if url_segments[1]
+    return null
 
 
 # Note: This list of animals should be credited to Sophia's previous PeerServer project at

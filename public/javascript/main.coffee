@@ -37,6 +37,10 @@ class window.FirebaseInteractor
     @fb_instance_stream = @fb_new_chat_room.child('stream')
     @fb_user_video_list = @fb_new_chat_room.child('user_video_list')
     @fb_memory = @fb_new_chat_room.child('memory')
+    @fb_memories = @fb_instance.child('memories')
+
+  initMemoryVersion: =>
+    @fb_memories = @fb_instance.child('memories')
 
 
 class window.EmotionVideoStore
@@ -108,6 +112,11 @@ class window.MemoryBuilder
     console.log "html: "
     Templates["memoryBuilder"](context)
     console.log $("#memory_builder_container")
+    memoryId = "memory-" + _.sample(window.listOfAnimals)  + "-" + window.getRandomAnimalNumber()
+    savedMemory = @fbInteractor.fb_memories.child(memoryId)
+    savedMemoryContext = savedMemory.child("context")
+    savedMemoryContext.set(context)
+    context.memoryUrl = document.location.origin+"/#&" + memoryId
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
     @fbInteractor.fb_memory.set(context)
     console.log context
@@ -222,15 +231,40 @@ class window.ChatRoom
     # Scroll to the bottom every time we display a new message
     @scrollToBottom(0);
 
+class StandAloneMemory
+
+  constructor: (@memoryId, @fbInteractor) ->
+    @memoryItem = @fbInteractor.fb_instance.child('memories').child(@memoryId).child("context")
+    if not @memoryItem
+      console.error "memory item not found.. "
+      $("body").html("<h3>Sorry, memory could not be found</h3>")
+      return
+
+    @memoryItem.on "value", (snapshot) =>
+      context = snapshot.val()
+      console.log context
+      if not context
+        $("body").html("<h3>Sorry, this memory could not be found. Check the URL. Or make a new memory!</h3>")
+        return
+      for panel in context.panels
+        panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v))
+      $("body").html(Templates["memoryBuilder"](context))
+
 
 # Start everything!
 $(document).ready ->
   fbInteractor = new FirebaseInteractor()
-  fbInteractor.init()
-  videoRecorder = new VideoRecorder()
-  chatRoom = new ChatRoom(fbInteractor, videoRecorder)
-  chatRoom.init()
-  videoRecorder.connectWebcam()
+  memoryId = window.get_memory_id()
+  if memoryId
+    $("#waiting").remove()
+    fbInteractor.initMemoryVersion()
+    standAloneMemory = new StandAloneMemory(memoryId, fbInteractor)
+  else
+    fbInteractor.init()
+    videoRecorder = new VideoRecorder()
+    chatRoom = new ChatRoom(fbInteractor, videoRecorder)
+    chatRoom.init()
+    videoRecorder.connectWebcam()
 
 
 
