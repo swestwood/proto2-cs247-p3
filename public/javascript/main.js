@@ -203,7 +203,10 @@
         return _this.displayMessage(snapshot.val());
       });
       this.fbInteractor.fb_user_video_list.on("child_added", function(snapshot) {
-        return _this.emotionVideoStore.addVideoSnapshot(snapshot.val());
+        _this.emotionVideoStore.addVideoSnapshot(snapshot.val());
+        return $("#make_memory_button").css({
+          "visibility": "visible"
+        });
       });
       this.fbInteractor.fb_user_video_list.on("child_removed", function(snapshot) {
         return _this.emotionVideoStore.removeVideoSnapshot(snapshot.val());

@@ -150,6 +150,7 @@ class window.ChatRoom
 
     @fbInteractor.fb_user_video_list.on "child_added", (snapshot) =>
       @emotionVideoStore.addVideoSnapshot(snapshot.val())
+      $("#make_memory_button").css({"visibility": "visible"})
 
     @fbInteractor.fb_user_video_list.on "child_removed", (snapshot) =>
       @emotionVideoStore.removeVideoSnapshot(snapshot.val())

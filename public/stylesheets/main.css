@@ -83,10 +83,6 @@ a {
 .effect.huerotate {
   -webkit-filter: contrast(200%) hue-rotate(300deg);
 }
-.effect.blur {
-  -webkit-filter: blur(3px);
-  filter: blur(5px);
-}
 .effect.tint {
   -webkit-filter: sepia(1) hue-rotate(200deg);
   filter: sepia(1) hue-rotate(200deg);
