@@ -256,6 +256,8 @@
         this.username = "anonymous" + Math.floor(Math.random() * 1111);
       }
       this.userColor = "#" + ((1 << 24) * Math.random() | 0).toString(16);
+      this.userColor = this.userColor.substr(0, 1) + '3' + this.userColor.substr(2);
+      this.userColor = this.userColor.substr(0, 3) + '3' + this.userColor.substr(4);
       this.fbInteractor.fb_instance_users.push({
         name: this.username,
         c: this.userColor
