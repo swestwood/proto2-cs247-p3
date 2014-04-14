@@ -78,12 +78,15 @@ class window.EmotionVideoStore
     console.log @videos
     console.log data
 
-  getRandomVideo: =>
+  sampleRandomVideos: (sampleSize) =>
     allVideos = _.flatten(_.values(@videos)) # One list of all the videos
     if _.isEmpty(allVideos)
       console.error "Cannot get random video URL, no videos exist"
       return undefined
-    return _.sample(allVideos)
+    sampled = _.sample(allVideos, sampleSize)
+    while _.size(sampled) < sampleSize
+      sampled.push(_.sample(allVideos))  # Add on random videos until we have enough videos, if there are fewer than sampleSize total.
+    return sampled
 
   removeVideoItem: (video, fb_video_list) =>
     if video.quickId not of @fbResults
@@ -105,10 +108,11 @@ class window.MemoryBuilder
     console.log "randomly making memory"
     context =
       panels: []
-    for panelIndex in ["first", "second", "third", "fourth"]
-      chosenVideo = @emotionVideoStore.getRandomVideo()
-      console.log "got a random memory"
-      context.panels.push({"video": chosenVideo, "panelIndex": panelIndex})
+    panelNames = ["first", "second", "third", "fourth"]
+    chosenVideos = @emotionVideoStore.sampleRandomVideos(_.size(panelNames))
+    for panelI in [0..._.size(panelNames)]
+      chosenVideo = chosenVideos[panelI]
+      context.panels.push({"video": chosenVideo, "panelIndex": panelNames[panelI]})
     console.log "html: "
     Templates["memoryBuilder"](context)
     console.log $("#memory_builder_container")

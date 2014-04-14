@@ -52,7 +52,7 @@
     "Stores a map from each user to a list of that user's emotion videos";
     function EmotionVideoStore() {
       this.removeVideoItem = __bind(this.removeVideoItem, this);
-      this.getRandomVideo = __bind(this.getRandomVideo, this);
+      this.sampleRandomVideos = __bind(this.sampleRandomVideos, this);
       this.removeVideoSnapshot = __bind(this.removeVideoSnapshot, this);
       this.storePushedFb = __bind(this.storePushedFb, this);
       this.addUser = __bind(this.addUser, this);
@@ -97,14 +97,18 @@
       return console.log(data);
     };
 
-    EmotionVideoStore.prototype.getRandomVideo = function() {
-      var allVideos;
+    EmotionVideoStore.prototype.sampleRandomVideos = function(sampleSize) {
+      var allVideos, sampled;
       allVideos = _.flatten(_.values(this.videos));
       if (_.isEmpty(allVideos)) {
         console.error("Cannot get random video URL, no videos exist");
         return void 0;
       }
-      return _.sample(allVideos);
+      sampled = _.sample(allVideos, sampleSize);
+      while (_.size(sampled) < sampleSize) {
+        sampled.push(_.sample(allVideos));
+      }
+      return sampled;
     };
 
     EmotionVideoStore.prototype.removeVideoItem = function(video, fb_video_list) {
@@ -136,19 +140,18 @@
     }
 
     MemoryBuilder.prototype.randomlyMakeMemory = function() {
-      var chosenVideo, context, memoryId, panelIndex, savedMemory, savedMemoryContext, _i, _len, _ref;
+      var chosenVideo, chosenVideos, context, memoryId, panelI, panelNames, savedMemory, savedMemoryContext, _i, _ref;
       console.log("randomly making memory");
       context = {
         panels: []
       };
-      _ref = ["first", "second", "third", "fourth"];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        panelIndex = _ref[_i];
-        chosenVideo = this.emotionVideoStore.getRandomVideo();
-        console.log("got a random memory");
+      panelNames = ["first", "second", "third", "fourth"];
+      chosenVideos = this.emotionVideoStore.sampleRandomVideos(_.size(panelNames));
+      for (panelI = _i = 0, _ref = _.size(panelNames); 0 <= _ref ? _i < _ref : _i > _ref; panelI = 0 <= _ref ? ++_i : --_i) {
+        chosenVideo = chosenVideos[panelI];
         context.panels.push({
           "video": chosenVideo,
-          "panelIndex": panelIndex
+          "panelIndex": panelNames[panelI]
         });
       }
       console.log("html: ");
