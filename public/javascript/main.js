@@ -252,6 +252,7 @@
         m: "Share this url with your friend to join this chat: <a href='" + url + "' target='_blank'>" + url + "</a>",
         c: "darkred"
       });
+      this.username = window.prompt("Welcome! What's your name?");
       if (!this.username) {
         this.username = "anonymous" + Math.floor(Math.random() * 1111);
       }
