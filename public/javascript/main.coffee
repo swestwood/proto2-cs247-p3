@@ -174,6 +174,8 @@ class window.ChatRoom
     if not @username
       @username = "anonymous"+Math.floor(Math.random()*1111)
     @userColor = "#"+((1<<24)*Math.random()|0).toString(16) # Choose random color
+    @userColor = @userColor.substr(0,1) + '3' + @userColor.substr(2)
+    @userColor = @userColor.substr(0,3) + '3' + @userColor.substr(4)
 
     @fbInteractor.fb_instance_users.push({ name: @username,c: @userColor})
     $("#waiting").remove()
