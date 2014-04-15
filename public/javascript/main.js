@@ -66,9 +66,7 @@
         this.videos[data.fromUser] = [];
       }
       data.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(data.v));
-      this.videos[data.fromUser].push(data);
-      console.log("videos: ");
-      return console.log(this.videos);
+      return this.videos[data.fromUser].push(data);
     };
 
     EmotionVideoStore.prototype.addUser = function(username) {
@@ -79,9 +77,7 @@
     };
 
     EmotionVideoStore.prototype.storePushedFb = function(pushedFb, quickId) {
-      this.fbResults[quickId] = pushedFb;
-      console.log(quickId);
-      return console.log(this.fbResults);
+      return this.fbResults[quickId] = pushedFb;
     };
 
     EmotionVideoStore.prototype.removeVideoSnapshot = function(data) {
@@ -89,12 +85,9 @@
       if (!(data.fromUser in this.videos)) {
         return;
       }
-      this.videos[data.fromUser] = this.videos[data.fromUser] = _.reject(this.videos[data.fromUser], function(item) {
+      return this.videos[data.fromUser] = this.videos[data.fromUser] = _.reject(this.videos[data.fromUser], function(item) {
         return item.quickId === data.quickId;
       });
-      console.log("((((((((( VIDEO REMOVED! videos: ))))))))) ");
-      console.log(this.videos);
-      return console.log(data);
     };
 
     EmotionVideoStore.prototype.sampleRandomVideos = function(sampleSize) {

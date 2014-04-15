@@ -55,8 +55,6 @@ class window.EmotionVideoStore
       @videos[data.fromUser] = []
     data.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(data.v))
     @videos[data.fromUser].push(data)
-    console.log "videos: "
-    console.log @videos
 
   addUser: (username) =>
     if username of @videos
@@ -65,8 +63,6 @@ class window.EmotionVideoStore
 
   storePushedFb: (pushedFb, quickId) =>
     @fbResults[quickId] = pushedFb  # Store a mapping
-    console.log quickId
-    console.log @fbResults
 
   removeVideoSnapshot: (data) =>
     if data.fromUser not of @videos
@@ -74,9 +70,6 @@ class window.EmotionVideoStore
     @videos[data.fromUser] =
     @videos[data.fromUser] = _.reject @videos[data.fromUser], (item) =>
       return item.quickId == data.quickId
-    console.log "((((((((( VIDEO REMOVED! videos: ))))))))) "
-    console.log @videos
-    console.log data
 
   sampleRandomVideos: (sampleSize) =>
     allVideos = _.flatten(_.values(@videos)) # One list of all the videos
