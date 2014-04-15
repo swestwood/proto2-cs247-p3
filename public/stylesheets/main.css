@@ -15,7 +15,7 @@ body {
 }
 #memory_builder .first-panel {
   width: 200px;
-  height: 177px;
+  height: 189px;
   color: white;
   vertical-align: center;
   background-color: lightblue;
@@ -25,6 +25,13 @@ body {
   background: -webkit-radial-gradient(center, ellipse cover, #efc5ca 0%, #ff6c36 50%, #ff384f 51%, #3300ff 100%);
   background: radial-gradient(ellipse at center, #efc5ca 0%, #ff6c36 50%, #ff384f 51%, #3300ff 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#efc5ca', endColorstr='#3300ff', GradientType=1);
+}
+#memory_builder .first-panel h3 {
+  font: 100 30px/1.2 'Pacifico', Helvetica, sans-serif;
+  color: #2b2b2b;
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1), 7px 7px 0px rgba(0, 0, 0, 0.05);
+  margin-top: 15px;
+  margin-bottom: 10px;
 }
 #memory_builder .panel_wrapper {
   display: inline-block;
@@ -85,6 +92,7 @@ a {
   border: 1px black;
   font-size: 10px;
   position: relative;
+  height: 36px;
   background-color: white;
   overflow: auto;
   max-height: 42px;
@@ -99,11 +107,11 @@ a {
   margin: 0 auto;
   position: absolute;
   /* margin-bottom: 68px; */
-  right: 84px;
+  right: 0px;
   padding: 0;
-  width: 100px;
+  width: 169px;
   z-index: 1;
-  bottom: 77px;
+  bottom: 0px;
 }
 #webcam_stream video {
   border: 2px solid #dcc;
