@@ -102,7 +102,9 @@ class window.EmotionVideoStore
 class window.MemoryBuilder
 
   constructor: (@elem, @emotionVideoStore, @fbInteractor) ->
+    @elem.html(Templates["memoryBuilder"]({"waitingForVideo": true}))
     $("#make_memory_button").on("click", @randomlyMakeMemory)
+
 
   randomlyMakeMemory: =>
     console.log "randomly making memory"
@@ -121,6 +123,8 @@ class window.MemoryBuilder
     savedMemoryContext.set(context)
     context.memoryUrl = document.location.origin+"/#&" + memoryId
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
+    $("#make_memory_button").on("click", @randomlyMakeMemory)
+
     @fbInteractor.fb_memory.set(context)
     console.log context
 
@@ -128,6 +132,8 @@ class window.MemoryBuilder
     for panel in context.panels
       panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v))  # Make a new local URL for the video to show up
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
+    $("#make_memory_button").on("click", @randomlyMakeMemory)
+
 
 
 
@@ -156,6 +162,8 @@ class window.ChatRoom
     @fbInteractor.fb_user_video_list.on "child_added", (snapshot) =>
       @emotionVideoStore.addVideoSnapshot(snapshot.val())
       $("#make_memory_button").css({"visibility": "visible"})
+      $("#make_memory_button").on("click", @randomlyMakeMemory)
+      $(".instructions-memory").hide()
 
     @fbInteractor.fb_user_video_list.on "child_removed", (snapshot) =>
       @emotionVideoStore.removeVideoSnapshot(snapshot.val())
@@ -171,6 +179,7 @@ class window.ChatRoom
     url = document.location.origin+"/#"+@fbInteractor.fb_chat_room_id
     @displayMessage({m: "Share this url with your friend to join this chat: <a href='" + url + "' target='_blank'>" + url+"</a>", c: "darkred", s: "share"})
     # Block until user name entered
+    @username = window.prompt("Welcome! What's your name?")  # Commented out for faster testing.
     if not @username
       @username = "anonymous"+Math.floor(Math.random()*1111)
     @userColor = "#"+((1<<24)*Math.random()|0).toString(16) # Choose random color
@@ -186,8 +195,9 @@ class window.ChatRoom
     $("#submission input").on "keydown", (event) =>
       if event.which == 13  # ENTER
         message = @submissionEl.val()
+
         messageWithUser = @username + ": " + message
-        console.log(message)
+        console.log messageWithUser
         emoticon = EmotionProcessor.getEmoticon(message)
         if emoticon
           videoToPush =
@@ -212,12 +222,12 @@ class window.ChatRoom
     # scroll to bottom of div
     chatElem = document.getElementById('conversation')
     if wait_time == 0
-      #chatElem.scrollTop = chatElem.scrollHeight
-      $("html,body").animate({ scrollTop: $(document).height() }, 200)
+      chatElem.scrollTop = chatElem.scrollHeight
+      # $("html,body").animate({ scrollTop: $(document).height() }, 200)
       return
     setTimeout =>
-      #chatElem.scrollTop = chatElem.scrollHeight
-      $("html,body").animate({ scrollTop: $(document).height() }, 200)
+      chatElem.scrollTop = chatElem.scrollHeight
+      # $("html,body").animate({ scrollTop: $(document).height() }, 200)
     , wait_time
 
   createVideoElem: (video_data) =>
@@ -239,7 +249,7 @@ class window.ChatRoom
 
   # creates a message node and appends it to the conversation
   displayMessage: (data) =>
-    @messageBefore = data.m 
+    @messageBefore = data.m
     changePoster = false
     if @lastPoster == null
       @lastPoster = data.u
@@ -294,7 +304,8 @@ class StandAloneMemory
         return
       for panel in context.panels
         panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v))
-      $("body").html(Templates["memoryWrapper"]({"standalone": true}))
+      context.standalone = true
+      $("body").html(Templates["memoryWrapper"]())
       $("#memory_builder_container").html(Templates["memoryBuilder"](context))
 
 

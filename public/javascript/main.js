@@ -137,6 +137,9 @@
       this.fbInteractor = fbInteractor;
       this.respondToSetMemory = __bind(this.respondToSetMemory, this);
       this.randomlyMakeMemory = __bind(this.randomlyMakeMemory, this);
+      this.elem.html(Templates["memoryBuilder"]({
+        "waitingForVideo": true
+      }));
       $("#make_memory_button").on("click", this.randomlyMakeMemory);
     }
 
@@ -164,6 +167,7 @@
       savedMemoryContext.set(context);
       context.memoryUrl = document.location.origin + "/#&" + memoryId;
       $("#memory_builder_container").html(Templates["memoryBuilder"](context));
+      $("#make_memory_button").on("click", this.randomlyMakeMemory);
       this.fbInteractor.fb_memory.set(context);
       return console.log(context);
     };
@@ -175,7 +179,8 @@
         panel = _ref[_i];
         panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v));
       }
-      return $("#memory_builder_container").html(Templates["memoryBuilder"](context));
+      $("#memory_builder_container").html(Templates["memoryBuilder"](context));
+      return $("#make_memory_button").on("click", this.randomlyMakeMemory);
     };
 
     return MemoryBuilder;
@@ -227,9 +232,11 @@
       this.fbInteractor.fb_user_video_list.on("child_added", (function(_this) {
         return function(snapshot) {
           _this.emotionVideoStore.addVideoSnapshot(snapshot.val());
-          return $("#make_memory_button").css({
+          $("#make_memory_button").css({
             "visibility": "visible"
           });
+          $("#make_memory_button").on("click", _this.randomlyMakeMemory);
+          return $(".instructions-memory").hide();
         };
       })(this));
       this.fbInteractor.fb_user_video_list.on("child_removed", (function(_this) {
@@ -256,6 +263,7 @@
         c: "darkred",
         s: "share"
       });
+      this.username = window.prompt("Welcome! What's your name?");
       if (!this.username) {
         this.username = "anonymous" + Math.floor(Math.random() * 1111);
       }
@@ -277,7 +285,7 @@
           if (event.which === 13) {
             message = _this.submissionEl.val();
             messageWithUser = _this.username + ": " + message;
-            console.log(message);
+            console.log(messageWithUser);
             emoticon = EmotionProcessor.getEmoticon(message);
             if (emoticon) {
               videoToPush = {
@@ -307,16 +315,12 @@
       var chatElem;
       chatElem = document.getElementById('conversation');
       if (wait_time === 0) {
-        $("html,body").animate({
-          scrollTop: $(document).height()
-        }, 200);
+        chatElem.scrollTop = chatElem.scrollHeight;
         return;
       }
       return setTimeout((function(_this) {
         return function() {
-          return $("html,body").animate({
-            scrollTop: $(document).height()
-          }, 200);
+          return chatElem.scrollTop = chatElem.scrollHeight;
         };
       })(this), wait_time);
     };
@@ -409,9 +413,8 @@
             panel = _ref[_i];
             panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v));
           }
-          $("body").html(Templates["memoryWrapper"]({
-            "standalone": true
-          }));
+          context.standalone = true;
+          $("body").html(Templates["memoryWrapper"]());
           return $("#memory_builder_container").html(Templates["memoryBuilder"](context));
         };
       })(this));

@@ -1,21 +1,39 @@
 body {
   margin: 0px;
   font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
-  height: 100%;
+  overflow: hidden;
+}
+@media only screen and (max-width: 999px) {
+  /* rules that only apply for canvases narrower than 1000px */
+  video {
+    width: 165px;
+  }
 }
 #memory_builder {
-  height: 95%;
+  text-align: center;
   margin: auto 0;
+}
+#memory_builder .first-panel {
+  width: 200px;
+  height: 177px;
+  color: white;
+  vertical-align: center;
+  background-color: lightblue;
+  display: inline-block;
+  margin-left: 2%;
+  background: #efc5ca;
+  background: -webkit-radial-gradient(center, ellipse cover, #efc5ca 0%, #ff6c36 50%, #ff384f 51%, #3300ff 100%);
+  background: radial-gradient(ellipse at center, #efc5ca 0%, #ff6c36 50%, #ff384f 51%, #3300ff 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#efc5ca', endColorstr='#3300ff', GradientType=1);
 }
 #memory_builder .panel_wrapper {
   display: inline-block;
   vertical-align: top;
   text-align: center;
-  margin-left: 1.5%;
-  height: 100%;
+  margin-left: 2%;
 }
-#memory_builder .panel_wrapper .panel {
-  height: 100%;
+#memory_builder .panel_wrapper video {
+  width: 200px;
 }
 #memory_builder .panel_wrapper .panel .memory_message {
   display: block;
@@ -43,23 +61,19 @@ a {
   color: #666666;
 }
 #build_memory {
-  margin-top: 29px;
-  position: fixed;
-  background-color: white;
   display: block;
   height: auto;
-  height: 40%;
+  margin-top: 40px;
+  vertical-align: top;
   width: 100%;
   padding-bottom: 50px;
 }
-#memory_builder_container {
-  position: fixed;
+#build_memory #memory_builder_container {
   width: 100%;
-  padding-left: 20%;
-  height: 30%;
+  height: 192px;
   -webkit-border-image: url(borders/film-cutout.png) 27 repeat stretch;
   border-style: solid;
-  border-width: 17px 0px;
+  border-width: 30px 0px;
 }
 #mem_bkgd img {
   height: 290px;
@@ -71,8 +85,10 @@ a {
   border: 1px black;
   font-size: 10px;
   position: relative;
-  top: -10%;
   background-color: white;
+  overflow: auto;
+  max-height: 42px;
+  max-width: 200px;
 }
 #chatbox {
   padding-top: 200px;
@@ -81,11 +97,13 @@ a {
 }
 #webcam_stream {
   margin: 0 auto;
-  position: fixed;
-  bottom: 0px;
-  right: 0px;
+  position: absolute;
+  /* margin-bottom: 68px; */
+  right: 84px;
   padding: 0;
-  width: 15%;
+  width: 100px;
+  z-index: 1;
+  bottom: 77px;
 }
 #webcam_stream video {
   border: 2px solid #dcc;
@@ -98,13 +116,17 @@ a {
   z-index: 999;
 }
 #conversation {
-  padding: 30% 0px 60px 0px;
-  width: 85%;
-  height: 100%;
+  /* padding: 0px 0px 60px 0px; */
+  width: 100%;
+  position: absolute;
+  /* height: 400px; */
+  /* min-height: 200px; */
   margin-left: 0px;
+  bottom: 72px;
   overflow-y: auto;
   vertical-align: top;
   display: inline-block;
+  top: 294px;
 }
 .msg {
   padding-left: 5%;
@@ -119,8 +141,7 @@ a {
 .msgtext {
   padding-left: 10%;
   padding-right: 5%;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 7px;
   border-bottom: 1px;
   margin: 0 auto;
   width: 85%;
