@@ -20,13 +20,18 @@ body {
 #in-strip-title {
   font: 100 30px/1.2 'Pacifico', Helvetica, sans-serif;
 }
+#make_memory_button {
+  padding: 10px;
+  border-radius: 2px;
+  margin-top: 10px;
+}
 #memory_builder {
   text-align: center;
   margin: auto 0;
 }
 #memory_builder .first-panel {
   width: 200px;
-  height: 189px;
+  height: 193px;
   color: white;
   vertical-align: center;
   background-color: lightblue;
@@ -53,6 +58,8 @@ body {
   width: 200px;
 }
 #memory_builder .panel_wrapper .panel .memory_message {
+  font-family: 'Gochi Hand', cursive;
+  font-size: 12px;
   display: block;
 }
 a {
@@ -100,9 +107,9 @@ a {
 }
 .annotation {
   border: 1px black;
-  font-size: 10px;
+  font-size: 12px;
   position: relative;
-  height: 36px;
+  height: 40px;
   background-color: white;
   overflow: auto;
   max-height: 42px;

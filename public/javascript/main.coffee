@@ -123,7 +123,7 @@ class window.MemoryBuilder
     savedMemoryContext.set(context)
     context.memoryUrl = document.location.origin+"/#&" + memoryId
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
-    $("#keep_memory_link").append("Keep this memory forever: " + "<a href=" + context.memoryUrl + " target='_blank'>" + context.memoryUrl + "</a>")
+    $("#keep_memory_link").html("Keep this memory forever: " + "<a href=" + context.memoryUrl + " target='_blank'>" + context.memoryUrl + "</a>")
     $("#make_memory_button").on("click", @randomlyMakeMemory)
     console.log context.memoryUrl
     @fbInteractor.fb_memory.set(context)
@@ -146,7 +146,7 @@ class window.ChatRoom
     context = []
     $("#entire_memory_wrapper").html(Templates["memoryWrapper"](context))
     @lastPoster = null
-    @backgroundColor = "#ffddc7"
+    @backgroundColor = "#a7dae7"
     @emotionVideoStore = new EmotionVideoStore()
     @messageBefore = ""
     @memoryBuilder = new MemoryBuilder($("#memory_builder_container"), @emotionVideoStore, @fbInteractor)
@@ -259,9 +259,9 @@ class window.ChatRoom
     else
       if (@lastPoster != data.u)
         @lastPoster = data.u
-        if @backgroundColor == "#f8ede6"
-          @backgroundColor = "#ffddc7"
-        else @backgroundColor = "#f8ede6"
+        if @backgroundColor == "#d8a2ee"
+          @backgroundColor = "#a7dae7"
+        else @backgroundColor = "#d8a2ee"
         changePoster = true
     if changePoster
       if data.j == "joined"

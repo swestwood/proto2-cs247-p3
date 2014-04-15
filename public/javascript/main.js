@@ -167,7 +167,7 @@
       savedMemoryContext.set(context);
       context.memoryUrl = document.location.origin + "/#&" + memoryId;
       $("#memory_builder_container").html(Templates["memoryBuilder"](context));
-      $("#keep_memory_link").append("Keep this memory forever: " + "<a href=" + context.memoryUrl + " target='_blank'>" + context.memoryUrl + "</a>");
+      $("#keep_memory_link").html("Keep this memory forever: " + "<a href=" + context.memoryUrl + " target='_blank'>" + context.memoryUrl + "</a>");
       $("#make_memory_button").on("click", this.randomlyMakeMemory);
       console.log(context.memoryUrl);
       this.fbInteractor.fb_memory.set(context);
@@ -205,7 +205,7 @@
       context = [];
       $("#entire_memory_wrapper").html(Templates["memoryWrapper"](context));
       this.lastPoster = null;
-      this.backgroundColor = "#ffddc7";
+      this.backgroundColor = "#a7dae7";
       this.emotionVideoStore = new EmotionVideoStore();
       this.messageBefore = "";
       this.memoryBuilder = new MemoryBuilder($("#memory_builder_container"), this.emotionVideoStore, this.fbInteractor);
@@ -351,10 +351,10 @@
       } else {
         if (this.lastPoster !== data.u) {
           this.lastPoster = data.u;
-          if (this.backgroundColor === "#f8ede6") {
-            this.backgroundColor = "#ffddc7";
+          if (this.backgroundColor === "#d8a2ee") {
+            this.backgroundColor = "#a7dae7";
           } else {
-            this.backgroundColor = "#f8ede6";
+            this.backgroundColor = "#d8a2ee";
           }
           changePoster = true;
         }
