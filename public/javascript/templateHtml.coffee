@@ -9,9 +9,9 @@ window.buildTemplates = =>
     <div class="first-panel">
       <div class="first-panel-contents">
         {{#if standalone}}
-          <h3 class="memory-builder-header">Our memory...</h3>
+          <h3 id="standalone-title" class="memory-builder-header">Our memory</h3>
         {{else}}
-          <h3 class="memory-builder-header">Build a memory together!</h3>
+          <h3 id="in-strip-title" class="memory-builder-header">Build a memory together!</h3>
             {{#if waitingForVideo}}
               <div class="instructions-memory">You need at least 1 emoticon video to build a memory, the more the better!</div>
             {{/if}}
@@ -23,7 +23,7 @@ window.buildTemplates = =>
             {{/if}}
             </div>
           {{#if memoryUrl}}
-              <h5>Keep this memory forever: <a href="{{memoryUrl}}" target="_blank">{{memoryUrl}}</a></h5>
+              <!--<h5>Keep this memory forever: <a href="{{memoryUrl}}" target="_blank">{{memoryUrl}}</a></h5>-->
           {{/if}}
         {{/if}}
       </div>

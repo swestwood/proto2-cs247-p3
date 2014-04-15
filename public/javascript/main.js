@@ -167,13 +167,17 @@
       savedMemoryContext.set(context);
       context.memoryUrl = document.location.origin + "/#&" + memoryId;
       $("#memory_builder_container").html(Templates["memoryBuilder"](context));
+      $("#keep_memory_link").append("Keep this memory forever: " + "<a href=" + context.memoryUrl + " target='_blank'>" + context.memoryUrl + "</a>");
       $("#make_memory_button").on("click", this.randomlyMakeMemory);
+      console.log(context.memoryUrl);
       this.fbInteractor.fb_memory.set(context);
       return console.log(context);
     };
 
     MemoryBuilder.prototype.respondToSetMemory = function(context) {
       var panel, _i, _len, _ref;
+      console.log("respondToSetMemory");
+      console.log(context.memoryUrl);
       _ref = context.panels;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         panel = _ref[_i];

@@ -9,6 +9,17 @@ body {
     width: 165px;
   }
 }
+#keep_memory_link {
+  margin-top: 10px;
+}
+#standalone-title {
+  -webkit-transform: rotate(-30deg);
+  padding-right: 30px;
+  font: 100 47px/1.2 'Pacifico', Helvetica, sans-serif;
+}
+#in-strip-title {
+  font: 100 30px/1.2 'Pacifico', Helvetica, sans-serif;
+}
 #memory_builder {
   text-align: center;
   margin: auto 0;
@@ -27,7 +38,6 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#efc5ca', endColorstr='#3300ff', GradientType=1);
 }
 #memory_builder .first-panel h3 {
-  font: 100 30px/1.2 'Pacifico', Helvetica, sans-serif;
   color: #2b2b2b;
   text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1), 7px 7px 0px rgba(0, 0, 0, 0.05);
   margin-top: 15px;
@@ -70,7 +80,7 @@ a {
 #build_memory {
   display: block;
   height: auto;
-  margin-top: 40px;
+  margin-top: 10px;
   vertical-align: top;
   width: 100%;
   padding-bottom: 50px;
@@ -134,7 +144,7 @@ a {
   overflow-y: auto;
   vertical-align: top;
   display: inline-block;
-  top: 294px;
+  top: 296px;
 }
 .msg {
   padding-left: 5%;

@@ -123,12 +123,15 @@ class window.MemoryBuilder
     savedMemoryContext.set(context)
     context.memoryUrl = document.location.origin+"/#&" + memoryId
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
+    $("#keep_memory_link").append("Keep this memory forever: " + "<a href=" + context.memoryUrl + " target='_blank'>" + context.memoryUrl + "</a>")
     $("#make_memory_button").on("click", @randomlyMakeMemory)
-
+    console.log context.memoryUrl
     @fbInteractor.fb_memory.set(context)
     console.log context
 
   respondToSetMemory: (context) =>
+    console.log "respondToSetMemory"
+    console.log context.memoryUrl
     for panel in context.panels
       panel.video.videoUrl = URL.createObjectURL(BlobConverter.base64_to_blob(panel.video.v))  # Make a new local URL for the video to show up
     $("#memory_builder_container").html(Templates["memoryBuilder"](context))
